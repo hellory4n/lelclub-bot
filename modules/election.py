@@ -1,10 +1,11 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import asyncio
 
 class Election(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
-        self.bot = bot
+    def __init__(self, client: commands.Bot):
+        self.client = client
     
     @commands.Cog.listener()
     async def on_ready(self):
@@ -14,5 +15,5 @@ class Election(commands.Cog):
     async def start_election(self, inter: discord.Interaction) -> None:
         await inter.response.send_message("my life be like oooo aaaa oooo")
 
-def setup(bot: commands.Bot):
-    bot.add_cog(Election(bot))
+async def setup(client: commands.Bot):
+    await client.add_cog(Election(client))

@@ -30,5 +30,6 @@ async def main():
     async with client:
         await client.load_extension("modules.election")
         await client.start(cool_token)
+        await client.tree.sync()
 
 asyncio.run(main())

@@ -12,7 +12,7 @@ client = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     await client.change_presence(activity=discord.Game("in ben we trust"))
     await client.remove_command("help")
-    print("m")
+    print("hi")
 
 @client.tree.command(name="ping", description="Check if the bot committed unaliving")
 async def ping(inter):
@@ -33,6 +33,5 @@ async def main():
         await client.load_extension("modules.election")
         await client.start(cool_token)
         await client.tree.sync()
-        
 
 asyncio.run(main())

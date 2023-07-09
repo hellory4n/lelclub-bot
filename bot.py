@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 import os
 import asyncio
+import json
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -26,7 +27,7 @@ async def sync(ctx: commands.Context):
     else:
         await ctx.send("you're not the bot owner lol")
 
-cool_token = os.environ["TOKEN"]
+cool_token = os.getenv("TOKEN")
 
 async def main():
     async with client:

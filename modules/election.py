@@ -28,9 +28,13 @@ class Election(commands.Cog):
             await inter.response.send_message("Election successfully started!", ephemeral=True)
         else:
             await inter.response.send_message("You can't manage the election!", ephemeral=True)
-    
-    class CoolRoleDropdown(Select):
-        def __init__(self):
+
+    @app_commands.command(name="nominate", description="Become a candidate in the next election!")
+    async def nominate(self, inter: discord.Interaction):
+        select = Select(
+            custom_id="roles",
+            placeholder="Choose a role",
+            max_values=11,
             options=[
                 SelectOption(label="President", emoji="🧑‍💼"),
                 SelectOption(label="Governor of Claps", emoji="👏"),
@@ -44,24 +48,16 @@ class Election(commands.Cog):
                 SelectOption(label="Governor of The Moon™", emoji="🌚"),
                 SelectOption(label="Governor of Finger Island", emoji="👍")
             ]
-            super().__init__(
-                custom_id="roles",
-                placeholder="Epic roles",
-                max_values=11,
-                options=options
-            )
-        
-        async def callback(self, inter: discord.Interaction):
-            self.election_stuff["candidates"][inter.user.id] == self.values
-            self.save_election()
-            print("this works?")
-            await inter.edit_original_message(content="Now people will be able to vote for you in the next election! Remember that elections start on the 1st of every month", view=None)
+        )
 
-    @app_commands.command(name="nominate", description="Become a candidate in the next election!")
-    async def nominate(self, inter: discord.Interaction):
+        async def cool_callback(self, inter: discord.Interaction, select: Select):
+            # self.election_stuff["candidates"][inter.user.id] == self.values
+            # self.save_election()
+            print("help")
+
+        select.callback = cool_callback
         view = View()
-        view.timeout = 180
-        view.add_item(self.CoolRoleDropdown)
+        view.add_item(select)
         await inter.response.send_message("What roles do you want? You can choose more than one.", ephemeral=True, view=view)
 
 async def setup(client: commands.Bot):

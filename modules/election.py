@@ -1,7 +1,7 @@
-import discord
-from discord import app_commands, SelectOption
-from discord.ext import commands
-from discord.ui import Select, View
+import disnake as discord
+from disnake import app_commands, SelectOption
+from disnake.ext import commands
+from disnake.ui import Select, View
 import json
 
 class Election(commands.Cog):
@@ -20,17 +20,28 @@ class Election(commands.Cog):
         with open("data/election.json", "w") as file:
             json.dump(self.election_stuff, file)
 
-    @app_commands.command(name="start-election", description="Start an election, wowser")
-    async def start_election(self, inter: discord.Interaction):
+    @commands.slash_command(name="start-election", description="Start an election, wowser")
+    async def start_election(self, inter):
         if (inter.user.id == 748560377763201185):
             self.election_stuff["started"] = True
             self.save_election()
-            await inter.response.send_message("Election successfully started!", ephemeral=True)
+            await inter.send("Election successfully started!", ephemeral=True)
         else:
-            await inter.response.send_message("You can't manage the election!", ephemeral=True)
+            await inter.send("You can't manage the election!", ephemeral=True)
 
-    @app_commands.command(name="nominate", description="Become a candidate in the next election!")
-    async def nominate(self, inter: discord.Interaction):
+    async def nominate_callback(self, inter: discord.ApplicationCommandInteraction):
+        # if someone is already a candidate, override roles
+        if inter.user.id in self.election_stuff["candidates"]:
+            del self.election_stuff["candidates"][inter.user.id]
+            self.election_stuff["candidates"].update({inter.user.id: inter.values})
+        else:
+            self.election_stuff["candidates"].update({inter.user.id: inter.values})
+
+        self.save_election()
+        await inter.send(content="You are now a candidate.", ephemeral=True)
+
+    @commands.slash_command(name="nominate", description="Become a candidate in the next election!")
+    async def nominate(self, inter):
         select = Select(
             custom_id="roles",
             placeholder="Choose a role",
@@ -50,15 +61,11 @@ class Election(commands.Cog):
             ]
         )
 
-        async def cool_callback(self, inter: discord.Interaction, select: Select):
-            # self.election_stuff["candidates"][inter.user.id] == self.values
-            # self.save_election()
-            print("help")
-
-        select.callback = cool_callback
+        select.callback = self.nominate_callback
         view = View()
+        view.timeout = 60
         view.add_item(select)
-        await inter.response.send_message("What roles do you want? You can choose more than one.", ephemeral=True, view=view)
+        await inter.send("What roles do you want? You can choose more than one.", ephemeral=True, view=view)
 
-async def setup(client: commands.Bot):
-    await client.add_cog(Election(client))
+def setup(client: commands.Bot):
+    client.add_cog(Election(client))

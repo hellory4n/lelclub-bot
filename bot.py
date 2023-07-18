@@ -12,7 +12,7 @@ async def on_ready():
     client.remove_command("help")
     print("hi")
 
-@client.slash_command(name="ping", description="Check if the bot committed unaliving")
+@client.slash_command(name="ping", description="Check if the bot committed unaliving", guild_ids=[748564859226161224])
 async def ping(inter):
     await inter.send(f"i'm definitely alive: latency is {round(client.latency * 1000)} ms")
 

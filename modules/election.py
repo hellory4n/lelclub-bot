@@ -20,7 +20,7 @@ class Election(commands.Cog):
         with open("data/election.json", "w") as file:
             json.dump(self.election_stuff, file)
 
-    @commands.slash_command(name="start-election", description="Start an election, wowser")
+    @commands.slash_command(name="start-election", description="Start an election, wowser", guild_ids=[748564859226161224])
     async def start_election(self, inter):
         if (inter.user.id == 748560377763201185):
             self.election_stuff["started"] = True
@@ -40,7 +40,7 @@ class Election(commands.Cog):
         self.save_election()
         await inter.send(content="You are now a candidate.", ephemeral=True)
 
-    @commands.slash_command(name="nominate", description="Become a candidate in the next election!")
+    @commands.slash_command(name="nominate", description="Become a candidate in our monthly election!", guild_ids=[748564859226161224])
     async def nominate(self, inter):
         select = Select(
             custom_id="roles",
@@ -66,6 +66,16 @@ class Election(commands.Cog):
         view.timeout = 60
         view.add_item(select)
         await inter.send("What roles do you want? You can choose more than one.", ephemeral=True, view=view)
+
+    @commands.slash_command(name="dismiss", description="Stop being a candidate in our elections", guild_ids=[748564859226161224])
+    async def dismiss(self, inter):
+        """try:
+            del self.election_stuff["candidates"][inter.user.id]
+            self.save_election()
+            await inter.send("Now you're not a candidate anymore", ephemeral=True)
+        except:
+            await inter.send("You're not a candidate!", ephemeral=True)"""
+        await inter.send("lol")
 
 def setup(client: commands.Bot):
     client.add_cog(Election(client))

@@ -4,7 +4,9 @@ from disnake.ext import commands
 import os
 import asyncio
 
-client = commands.Bot(command_prefix="fuckofflolgdjgkl,ndjkflgnfhiop", intents=discord.Intents(message_content=True))
+epic_cool_intents = discord.Intents.default()
+epic_cool_intents.message_content = True
+client = commands.Bot(command_prefix=commands.when_mentioned_or("l."), intents=epic_cool_intents)
 
 @client.event
 async def on_ready():
@@ -12,7 +14,7 @@ async def on_ready():
     client.remove_command("help")
     print("hi")
 
-@client.slash_command(name="ping", description="Check if the bot committed unaliving", guild_ids=[748564859226161224])
+@client.command(name="ping", description="Check if the bot committed unaliving", guild_ids=[748564859226161224])
 async def ping(inter):
     await inter.send(f"i'm definitely alive: latency is {round(client.latency * 1000)} ms")
 

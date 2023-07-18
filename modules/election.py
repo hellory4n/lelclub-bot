@@ -20,28 +20,28 @@ class Election(commands.Cog):
         with open("data/election.json", "w") as file:
             json.dump(self.election_stuff, file)
 
-    @commands.slash_command(name="start-election", description="Start an election, wowser", guild_ids=[748564859226161224])
-    async def start_election(self, inter):
-        if (inter.user.id == 748560377763201185):
+    @commands.command(name="start-election")
+    async def start_election(self, ctx):
+        if (ctx.author.id == 748560377763201185):
             self.election_stuff["started"] = True
             self.save_election()
-            await inter.send("Election successfully started!", ephemeral=True)
+            await ctx.send("Election successfully started!")
         else:
-            await inter.send("You can't manage the election!", ephemeral=True)
+            await ctx.send("You can't manage the election!")
 
     async def nominate_callback(self, inter: discord.ApplicationCommandInteraction):
         # if someone is already a candidate, override roles
-        if inter.user.id in self.election_stuff["candidates"]:
+        if inter.author.id in self.election_stuff["candidates"]:
             del self.election_stuff["candidates"][inter.user.id]
             self.election_stuff["candidates"].update({inter.user.id: inter.values})
         else:
             self.election_stuff["candidates"].update({inter.user.id: inter.values})
 
         self.save_election()
-        await inter.send(content="You are now a candidate.", ephemeral=True)
+        await inter.send(content="You are now a candidate.")
 
-    @commands.slash_command(name="nominate", description="Become a candidate in our monthly election!", guild_ids=[748564859226161224])
-    async def nominate(self, inter):
+    @commands.command()
+    async def nominate(self, ctx):
         select = Select(
             custom_id="roles",
             placeholder="Choose a role",
@@ -65,17 +65,16 @@ class Election(commands.Cog):
         view = View()
         view.timeout = 60
         view.add_item(select)
-        await inter.send("What roles do you want? You can choose more than one.", ephemeral=True, view=view)
+        await ctx.send("What roles do you want? You can choose more than one.", view=view)
 
-    @commands.slash_command(name="dismiss", description="Stop being a candidate in our elections", guild_ids=[748564859226161224])
-    async def dismiss(self, inter):
-        """try:
-            del self.election_stuff["candidates"][inter.user.id]
+    @commands.command()
+    async def dismiss(self, ctx):
+        try:
+            del self.election_stuff["candidates"][ctx.author.id]
             self.save_election()
-            await inter.send("Now you're not a candidate anymore", ephemeral=True)
+            await ctx.send("Now you're not a candidate anymore")
         except:
-            await inter.send("You're not a candidate!", ephemeral=True)"""
-        await inter.send("lol")
+            await ctx.send("You're not a candidate!")
 
 def setup(client: commands.Bot):
     client.add_cog(Election(client))

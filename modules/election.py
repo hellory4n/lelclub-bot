@@ -20,6 +20,8 @@ class Election(commands.Cog):
         with open("data/election.json", "w") as file:
             json.dump(self.election_stuff, file)
 
+
+
     @commands.command(name="start-election")
     async def start_election(self, ctx):
         if (ctx.author.id == 748560377763201185):
@@ -28,6 +30,8 @@ class Election(commands.Cog):
             await ctx.send("Election successfully started!")
         else:
             await ctx.send("You can't manage the election!")
+
+
 
     async def nominate_callback(self, inter: discord.ApplicationCommandInteraction):
         # if someone is already a candidate, override roles
@@ -67,15 +71,22 @@ class Election(commands.Cog):
         view.add_item(select)
         await ctx.send("What roles do you want? You can choose more than one.", view=view)
 
+
+
     @commands.command()
     async def dismiss(self, ctx):
-        try:
-            del self.election_stuff["candidates"][ctx.author.id]
-            self.save_election()
-            await ctx.send("Now you're not a candidate anymore")
-        except:
-            await ctx.send("You're not a candidate!")
-    
+        if self.election_stuff["started"]:
+            await ctx.send("You can't do that while people are voting!")
+        else:
+            try:
+                del self.election_stuff["candidates"][ctx.author.id]
+                self.save_election()
+                await ctx.send("Now you're not a candidate anymore")
+            except:
+                await ctx.send("You're not a candidate!")
+
+
+
     async def please_help_me(self, inter: discord.ApplicationCommandInteraction):
         voter = inter.author
 

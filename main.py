@@ -3,6 +3,7 @@ from disnake import app_commands
 from disnake.ext import commands
 import os
 import asyncio
+import json
 
 epic_cool_intents = discord.Intents.default()
 epic_cool_intents.message_content = True
@@ -29,7 +30,16 @@ async def help(ctx):
 cool_token = os.getenv("TOKEN")
 
 async def main():
+    # create cool election data
+    if not os.path.exists("/data/"):
+        os.makedirs("/data/")
     
+    if not os.path.exists("/data/election.json"):
+        init = {"started": False, "candidates": {}, "votes": {}}
+        with open("/data/election.json", "w") as json_file:
+            json.dump(init, json_file)
+
+    # now we actually run the bot
     client.load_extensions("./modules/")
     await client.start(cool_token)
 

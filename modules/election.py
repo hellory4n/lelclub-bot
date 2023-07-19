@@ -9,7 +9,7 @@ class Election(commands.Cog):
         self.client = client
         self.election_stuff: dict[str, any] = {}
 
-        with open("data/election.json", "r") as file:
+        with open("/data/election.json", "r") as file:
             self.election_stuff = json.load(file)
 
     @commands.Cog.listener()
@@ -17,7 +17,7 @@ class Election(commands.Cog):
         print("election cog loaded")
     
     def save_election(self):
-        with open("data/election.json", "w") as file:
+        with open("/data/election.json", "w") as file:
             json.dump(self.election_stuff, file)
 
 

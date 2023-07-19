@@ -217,14 +217,14 @@ class Election(commands.Cog):
             for user, roles in self.election_stuff["candidates"].items():
                 if "President" in roles:
                     maybe_presidents.update({user: 0})
-            print(maybe_presidents)
 
             # calculate president results
             for voter, vote in self.election_stuff["votes"].items():
-                # first item in the votes will always be the president, that's how the /vote commands saves it
+                # first item in the votes will always be the president, that's how the vote commands saves it
                 president_choice = vote[0].split(":")[1]
                 maybe_presidents[president_choice] += 1
-            print(maybe_presidents)
+            
+            print(f"maybe presidents: {maybe_presidents}")
             
             states = [
                 "Claps",
@@ -248,8 +248,8 @@ class Election(commands.Cog):
                     gclaps.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Claps" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Claps" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gclaps[governor_choice] += 1
             
             glelcenter = {}
@@ -258,8 +258,8 @@ class Election(commands.Cog):
                     glelcenter.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Lelcenter" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Lelcenter" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     glelcenter[governor_choice] += 1
             
             gpoophq = {}
@@ -268,8 +268,8 @@ class Election(commands.Cog):
                     gpoophq.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Poop HQ" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Poop HQ" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gpoophq[governor_choice] += 1
             
             gben = {}
@@ -278,8 +278,8 @@ class Election(commands.Cog):
                     gben.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Ben State" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Ben State" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gben[governor_choice] += 1
             
             gbg = {}
@@ -288,8 +288,8 @@ class Election(commands.Cog):
                     gbg.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Breat Gritain" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Breat Gritain" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gbg[governor_choice] += 1
             
             gbolg = {}
@@ -298,8 +298,8 @@ class Election(commands.Cog):
                     gbolg.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Builders of La Grasa" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Builders of La Grasa" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gbolg[governor_choice] += 1
             
             gfrance = {}
@@ -308,8 +308,8 @@ class Election(commands.Cog):
                     gfrance.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of France 2.0" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "France 2.0" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gfrance[governor_choice] += 1
             
             gbk = {}
@@ -318,8 +318,8 @@ class Election(commands.Cog):
                     gbk.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Berkelium" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Berkelium" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gbk[governor_choice] += 1
             
             gfinger = {}
@@ -328,8 +328,8 @@ class Election(commands.Cog):
                     gfinger.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of Finger Island" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "Finger Island" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gfinger[governor_choice] += 1
             
             gmoon = {}
@@ -338,60 +338,61 @@ class Election(commands.Cog):
                     gmoon.update({user: 0})
 
             for voter, vote in self.election_stuff["votes"].items():
-                if "Governor of The Moon™" in vote:
-                    governor_choice = vote[0].split(":")[1]
+                if "The Moon™" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
                     gmoon[governor_choice] += 1
             
             # sort stuff :)
+            # just using sorted() turns the vote dictionary into a list
             # the last 100 lines were pure suffering
-            maybe_presidents = sorted(maybe_presidents)
-            gclaps = sorted(gclaps)
-            glelcenter = sorted(glelcenter)
-            gpoophq = sorted(gpoophq)
-            gben = sorted(gben)
-            gbg = sorted(gbg)
-            gbolg = sorted(gbolg)
-            gfrance = sorted(gfrance)
-            gbk = sorted(gbk)
-            gfinger = sorted(gfinger)
-            gmoon = sorted(gmoon)
+            maybe_presidents = dict(sorted(maybe_presidents.items(), key=lambda x:x[1], reverse=True))
+            gclaps = dict(sorted(gclaps.items(), key=lambda x:x[1], reverse=True))
+            glelcenter = dict(sorted(glelcenter.items(), key=lambda x:x[1], reverse=True))
+            gpoophq = dict(sorted(gpoophq.items(), key=lambda x:x[1], reverse=True))
+            gben = dict(sorted(gben.items(), key=lambda x:x[1], reverse=True))
+            gbg = dict(sorted(gbg.items(), key=lambda x:x[1], reverse=True))
+            gbolg = dict(sorted(gbolg.items(), key=lambda x:x[1], reverse=True))
+            gfrance = dict(sorted(gfrance.items(), key=lambda x:x[1], reverse=True))
+            gbk = dict(sorted(gbk.items(), key=lambda x:x[1], reverse=True))
+            gfinger = dict(sorted(gfinger.items(), key=lambda x:x[1], reverse=True))
+            gmoon = dict(sorted(gmoon.items(), key=lambda x:x[1], reverse=True))
 
             # make cool embeds for the results :)
-            president_results = discord.Embed(title="President Results")
-            claps_results = discord.Embed(title="Claps Results")
-            lelcenter_results = discord.Embed(title="Lelcenter Results")
-            poophq_results = discord.Embed(title="Poop HQ Results")
-            ben_results = discord.Embed(title="Ben State Results")
-            breatgritain_results = discord.Embed(title="Breat Gritain Results")
-            bolg_results = discord.Embed(title="Builders of La Grasa Results")
-            france_results = discord.Embed(title="France 2.0 Results")
-            berkelium_results = discord.Embed(title="Berkelium Results")
-            finger_results = discord.Embed(title="Finger Island Results")
-            moon_results = discord.Embed(title="The Moon™ Results")
+            president_results = discord.Embed(title="President Results", description="")
+            claps_results = discord.Embed(title="Claps Results", description="")
+            lelcenter_results = discord.Embed(title="Lelcenter Results", description="")
+            poophq_results = discord.Embed(title="Poop HQ Results", description="")
+            ben_results = discord.Embed(title="Ben State Results", description="")
+            breatgritain_results = discord.Embed(title="Breat Gritain Results", description="")
+            bolg_results = discord.Embed(title="Builders of La Grasa Results", description="")
+            france_results = discord.Embed(title="France 2.0 Results", description="")
+            berkelium_results = discord.Embed(title="Berkelium Results", description="")
+            finger_results = discord.Embed(title="Finger Island Results", description="")
+            moon_results = discord.Embed(title="The Moon™ Results", description="")
 
             # more pain
-            print(maybe_presidents)
-            for ye, mues in maybe_presidents.values:
+            print(f"new maybe presidents: {maybe_presidents}")
+            for ye, mues in maybe_presidents.items():
                 president_results.description += f"<@{ye}>: {mues} votes\n"
-            for ye in gclaps:
+            for candidate, votes in gclaps.items():
                 claps_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in glelcenter:
+            for candidate, votes in glelcenter.items():
                 lelcenter_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gpoophq:
+            for candidate, votes in gpoophq.items():
                 poophq_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gben:
+            for candidate, votes in gben.items():
                 ben_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gbg:
+            for candidate, votes in gbg.items():
                 breatgritain_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gbolg:
+            for candidate, votes in gbolg.items():
                 bolg_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gfrance:
+            for candidate, votes in gfrance.items():
                 france_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gbk:
+            for candidate, votes in gbk.items():
                 berkelium_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gfinger:
+            for candidate, votes in gfinger.items():
                 finger_results.description += f"<@{candidate}>: {votes} votes\n"
-            for ye in gmoon:
+            for candidate, votes in gmoon.items():
                 moon_results.description += f"<@{candidate}>: {votes} votes\n"
             
             # this is really dumb
@@ -409,13 +410,22 @@ class Election(commands.Cog):
             ])
             await ctx.send(embed=president_results)
 
-            # one final announcement
+            # i removed this so i don't have to handle ties lol
+            """# one final announcement
             total_votes = 0
             for candidate, votes in maybe_presidents.items():
                 total_votes += votes
             
-            winner_percentage = (total_votes/maybe_presidents[0])*100
-            await ctx.send(f"<@{maybe_presidents[0]}> IS NOW THE PRESIDENT OF THE CAPITALIST UNITED FEDERAL DEMOCRATIC REPUBLIC STATES OF LELCLUB WITH A WHOPPING {winner_percentage}% OF VOTES (we had a total of {total_votes} votes)")
+            winner = 0
+            winner_votes = 0
+            # a questionable way of getting the winner
+            for candidate, votes in maybe_presidents.items():
+                winner = candidate
+                winner_votes = votes
+                break
+            
+            winner_percentage = (winner_votes/total_votes)*100
+            await ctx.send(f"<@{winner}> IS NOW THE PRESIDENT OF THE CAPITALIST UNITED FEDERAL DEMOCRATIC REPUBLIC STATES OF LELCLUB WITH A WHOPPING {winner_percentage}% OF VOTES (we had a total of {total_votes} votes) <:omggggggggg:1029147181833265192> <:omggggggggg:1029147181833265192> <:omggggggggg:1029147181833265192> <:omggggggggg:1029147181833265192> <:omggggggggg:1029147181833265192>")"""
 
             # reset election data
             self.election_stuff = {
@@ -425,7 +435,7 @@ class Election(commands.Cog):
             }
             self.save_election()
         else:
-            ctx.send("You can't manage the election!")
+            await ctx.send("You can't manage the election!")
 
 def setup(client: commands.Bot):
     client.add_cog(Election(client))

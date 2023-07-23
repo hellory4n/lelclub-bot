@@ -436,6 +436,13 @@ class Election(commands.Cog):
             self.save_election()
         else:
             await ctx.send("You can't manage the election!")
+    
+    @commands.command()
+    async def get_election_data(self, ctx: commands.Context):
+        if ctx.author.id == 748560377763201185:
+            ctx.send(self.election_stuff)
+        else:
+            ctx.send("you can't do that")
 
 def setup(client: commands.Bot):
     client.add_cog(Election(client))

@@ -184,11 +184,11 @@ class Election(commands.Cog):
             view.add_item(select)
 
             # vote on dms :)
-            try:
-                voter = ctx.author
-                await voter.send("Thanks for deciding to vote, this will shape the future of lelclub. Votes are secure and anonymous :)\n\nWho do you want to be the president?", view=view)
-            except:
-                await ctx.send(f"{ctx.author.mention} please enable DMs to be able to vote, then try again")
+            # try:
+            voter = ctx.author
+            await voter.send("Thanks for deciding to vote, this will shape the future of lelclub. Votes are secure and anonymous :)\n\nWho do you want to be the president?", view=view)
+            # except:
+                # await ctx.send(f"{ctx.author.mention} please enable DMs to be able to vote, then try again")
         else:
             await ctx.send("The election hasn't started! They do on the 1st of each month tho (unless the bot breaks)")
 
@@ -216,15 +216,17 @@ class Election(commands.Cog):
             maybe_presidents = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "President" in roles:
-                    maybe_presidents.update({user: 0})
+                    maybe_presidents.update({str(user): 0})
 
+            print(f"maybe presidents: {maybe_presidents}")
+            
             # calculate president results
             for voter, vote in self.election_stuff["votes"].items():
                 # first item in the votes will always be the president, that's how the vote commands saves it
                 president_choice = vote[0].split(":")[1]
-                maybe_presidents[president_choice] += 1
+                maybe_presidents[str(president_choice)] += 1
             
-            print(f"maybe presidents: {maybe_presidents}")
+            
             
             states = [
                 "Claps",
@@ -245,102 +247,102 @@ class Election(commands.Cog):
             gclaps = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Claps" in roles:
-                    gclaps.update({user: 0})
+                    gclaps.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Claps" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gclaps[governor_choice] += 1
+                    gclaps[str(governor_choice)] += 1
             
             glelcenter = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Lelcenter" in roles:
-                    glelcenter.update({user: 0})
+                    glelcenter.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Lelcenter" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    glelcenter[governor_choice] += 1
+                    glelcenter[str(governor_choice)] += 1
             
             gpoophq = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Poop HQ" in roles:
-                    gpoophq.update({user: 0})
+                    gpoophq.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Poop HQ" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gpoophq[governor_choice] += 1
+                    gpoophq[str(governor_choice)] += 1
             
             gben = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Ben State" in roles:
-                    gben.update({user: 0})
+                    gben.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Ben State" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gben[governor_choice] += 1
+                    gben[str(governor_choice)] += 1
             
             gbg = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Breat Gritain" in roles:
-                    gbg.update({user: 0})
+                    gbg.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Breat Gritain" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gbg[governor_choice] += 1
+                    gbg[str(governor_choice)] += 1
             
             gbolg = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Builders of La Grasa" in roles:
-                    gbolg.update({user: 0})
+                    gbolg.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Builders of La Grasa" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gbolg[governor_choice] += 1
+                    gbolg[str(governor_choice)] += 1
             
             gfrance = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of France 2.0" in roles:
-                    gfrance.update({user: 0})
+                    gfrance.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "France 2.0" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gfrance[governor_choice] += 1
+                    gfrance[str(governor_choice)] += 1
             
             gbk = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Berkelium" in roles:
-                    gbk.update({user: 0})
+                    gbk.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Berkelium" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gbk[governor_choice] += 1
+                    gbk[str(governor_choice)] += 1
             
             gfinger = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of Finger Island" in roles:
-                    gfinger.update({user: 0})
+                    gfinger.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "Finger Island" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gfinger[governor_choice] += 1
+                    gfinger[str(governor_choice)] += 1
             
             gmoon = {}
             for user, roles in self.election_stuff["candidates"].items():
                 if "Governor of The Moon™" in roles:
-                    gmoon.update({user: 0})
+                    gmoon.update({str(user): 0})
 
             for voter, vote in self.election_stuff["votes"].items():
                 if "The Moon™" in vote[1]:
                     governor_choice = vote[1].split(":")[1]
-                    gmoon[governor_choice] += 1
+                    gmoon[str(governor_choice)] += 1
             
             # sort stuff :)
             # just using sorted() turns the vote dictionary into a list

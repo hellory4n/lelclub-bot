@@ -28,16 +28,18 @@ async def help(ctx):
     await ctx.send(embed=cool_embed)
 
 cool_token = os.getenv("TOKEN")
+version = os.getenv("VERSION")
 
 async def main():
     # create cool election data
-    if not os.path.exists("/data/"):
-        os.makedirs("/data/")
+    if version == "release":
+        if not os.path.exists("/data/"):
+            os.makedirs("/data/")
     
-    if not os.path.exists("/data/election.json"):
-        init = {"started": False, "candidates": {}, "votes": {}}
-        with open("/data/election.json", "w") as json_file:
-            json.dump(init, json_file)
+        if not os.path.exists("/data/election.json"):
+            init = {"started": False, "candidates": {}, "votes": {}}
+            with open("/data/election.json", "w") as json_file:
+                json.dump(init, json_file)
 
     # now we actually run the bot
     client.load_extensions("./modules/")

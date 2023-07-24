@@ -3,22 +3,31 @@ from disnake import app_commands, SelectOption
 from disnake.ext import commands
 from disnake.ui import Select, View
 import json
+import os
 
 class Election(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
         self.election_stuff: dict[str, any] = {}
 
-        with open("/data/election.json", "r") as file:
-            self.election_stuff = json.load(file)
+        if os.getenv("VERSION") == "release":
+            with open("/data/election.json", "r") as file:
+                self.election_stuff = json.load(file)
+        else:
+            with open("data/election.json", "r") as file:
+                self.election_stuff = json.load(file)
 
     @commands.Cog.listener()
     async def on_ready(self):
         print("election cog loaded")
     
     def save_election(self):
-        with open("/data/election.json", "w") as file:
-            json.dump(self.election_stuff, file)
+        if os.getenv("VERSION") == "release":
+            with open("/data/election.json", "w") as file:
+                json.dump(self.election_stuff, file)
+        else:
+            with open("data/election.json", "w") as file:
+                json.dump(self.election_stuff, file)
 
 
 

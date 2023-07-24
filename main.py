@@ -1,9 +1,10 @@
 import disnake as discord
 from disnake import app_commands
-from disnake.ext import commands
+from disnake.ext import commands, tasks
 import os
 import asyncio
 import json
+import random
 
 epic_cool_intents = discord.Intents.default()
 epic_cool_intents.message_content = True
@@ -12,7 +13,7 @@ client.remove_command("help")
 
 @client.event
 async def on_ready():
-    await client.change_presence(activity=discord.Game("in ben we trust"))
+    await suffering.start()
     print("hi")
 
 @client.command()
@@ -30,6 +31,24 @@ async def help(ctx):
 cool_token = os.getenv("TOKEN")
 version = os.getenv("VERSION")
 
+# it's a loop :)
+@tasks.loop(seconds = 30)
+async def suffering():
+    pain = [
+        "Wii Are Resorting to Violence",
+        "Mining & Crafting",
+        "UnderCroch",
+        "Overlook",
+        "Galaxy Citizen",
+        "Power Distance 5",
+        "Pablo",
+        "Squilliam Fancyson",
+        "MOMAZOS DIEGO ADVENTURE 2",
+        "Funcade",
+        "Funcade Adventures"
+    ]
+    await client.change_presence(activity=discord.Game(f"{random.choice(pain)} on Is Tim"))
+
 async def main():
     # create cool election data
     if version == "release":
@@ -44,5 +63,6 @@ async def main():
     # now we actually run the bot
     client.load_extensions("./modules/")
     await client.start(cool_token)
+    
 
 asyncio.run(main())

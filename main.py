@@ -51,17 +51,6 @@ async def suffering():
     await client.change_presence(activity=discord.Game(f"{random.choice(pain)} on Is Tim"))
 
 async def main():
-    # create cool election data
-    if version == "release":
-        if not os.path.exists("/data/"):
-            os.makedirs("/data/")
-    
-        if not os.path.exists("/data/election.json"):
-            init = {"started": False, "candidates": {}, "votes": {}}
-            with open("/data/election.json", "w") as json_file:
-                json.dump(init, json_file)
-
-    # now we actually run the bot
     client.load_extensions("./modules/")
     keep_alive()
     await client.start(cool_token)

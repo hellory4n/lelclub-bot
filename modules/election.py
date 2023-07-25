@@ -10,24 +10,16 @@ class Election(commands.Cog):
         self.client = client
         self.election_stuff: dict[str, any] = {}
 
-        if os.getenv("VERSION") == "release":
-            with open("/data/election.json", "r") as file:
-                self.election_stuff = json.load(file)
-        else:
-            with open("data/election.json", "r") as file:
-                self.election_stuff = json.load(file)
+        with open("data/election.json", "r") as file:
+            self.election_stuff = json.load(file)
 
     @commands.Cog.listener()
     async def on_ready(self):
         print("election cog loaded")
     
     def save_election(self):
-        if os.getenv("VERSION") == "release":
-            with open("/data/election.json", "w") as file:
-                json.dump(self.election_stuff, file)
-        else:
-            with open("data/election.json", "w") as file:
-                json.dump(self.election_stuff, file)
+        with open("data/election.json", "w") as file:
+            json.dump(self.election_stuff, file)
 
 
 

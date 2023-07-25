@@ -454,20 +454,6 @@ class Election(commands.Cog):
             await ctx.send(self.election_stuff)
         else:
             await ctx.send("you can't do that")
-    
-    # the data deletes itself everytime i update the bot lol nice i should change where it's hosted
-    @commands.command()
-    async def set_election_data(self, ctx: commands.Context, *, whytho: str):
-        if ctx.author.id == 748560377763201185:
-            with open("/data/election.json", "w") as hjkh:
-                hjkh.write(whytho)
-            
-            with open("/data/election.json", "r") as mhjnjkm:
-                self.election_stuff = json.load(mhjnjkm)
-            
-            await ctx.send("there you go")
-        else:
-            await ctx.send("you can't do that")
 
 def setup(client: commands.Bot):
     client.add_cog(Election(client))

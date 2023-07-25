@@ -5,6 +5,7 @@ import os
 import asyncio
 import json
 import random
+from keep_alive import keep_alive
 
 epic_cool_intents = discord.Intents.default()
 epic_cool_intents.message_content = True
@@ -62,7 +63,7 @@ async def main():
 
     # now we actually run the bot
     client.load_extensions("./modules/")
+    keep_alive()
     await client.start(cool_token)
-    
 
 asyncio.run(main())

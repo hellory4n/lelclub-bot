@@ -6,3 +6,10 @@ disnake==2.9.0
 idna==3.4
 multidict==6.0.4
 yarl==1.9.2
+Flask==2.3.2
+Werkzeug==2.3.6
+Jinja2==3.1.2
+itsdangerous==2.1.2
+click==8.1.6
+blinker==1.6.2
+MarkupSafe==2.1.3

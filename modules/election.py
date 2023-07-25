@@ -457,7 +457,7 @@ class Election(commands.Cog):
     
     # the data deletes itself everytime i update the bot lol nice i should change where it's hosted
     @commands.command()
-    async def set_election_data(self, ctx: commands.Context, whytho: str):
+    async def set_election_data(self, ctx: commands.Context, *, whytho: str):
         if ctx.author.id == 748560377763201185:
             with open("/data/election.json", "w") as hjkh:
                 hjkh.write(whytho)

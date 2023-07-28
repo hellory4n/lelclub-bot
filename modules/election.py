@@ -36,11 +36,11 @@ class Election(commands.Cog):
 
     async def nominate_callback(self, inter: discord.ApplicationCommandInteraction):
         # if someone is already a candidate, override roles
-        if inter.author.id in self.election_stuff["candidates"]:
-            del self.election_stuff["candidates"][inter.user.id]
-            self.election_stuff["candidates"].update({inter.user.id: inter.values})
+        if str(inter.author.id) in self.election_stuff["candidates"]:
+            del self.election_stuff["candidates"][str(inter.author.id)]
+            self.election_stuff["candidates"].update({str(inter.author.id): inter.values})
         else:
-            self.election_stuff["candidates"].update({inter.user.id: inter.values})
+            self.election_stuff["candidates"].update({str(inter.author.id): inter.values})
 
         self.save_election()
         await inter.send(content="You are now a candidate.")
@@ -50,7 +50,7 @@ class Election(commands.Cog):
         select = Select(
             custom_id="roles",
             placeholder="Choose a role",
-            max_values=11,
+            max_values=13,
             options=[
                 SelectOption(label="President", emoji="🧑‍💼"),
                 SelectOption(label="Governor of Claps", emoji="👏"),
@@ -62,7 +62,9 @@ class Election(commands.Cog):
                 SelectOption(label="Governor of France 2.0", emoji="🥖"),
                 SelectOption(label="Governor of Berkelium", emoji="🅱️"),
                 SelectOption(label="Governor of The Moon™", emoji="🌚"),
-                SelectOption(label="Governor of Finger Island", emoji="👍")
+                SelectOption(label="Governor of Finger Island", emoji="👍"),
+                SelectOption(label="Governor of Noway", emoji="<:norway:1133172484733157396>"),
+                SelectOption(label="Governor of New Virginia (Chad)", emoji="<:chad:1133172417871741148>")
             ]
         )
 
@@ -80,7 +82,7 @@ class Election(commands.Cog):
             await ctx.send("You can't do that while people are voting!")
         else:
             try:
-                del self.election_stuff["candidates"][ctx.author.id]
+                del self.election_stuff["candidates"][str(ctx.author.id)]
                 self.save_election()
                 await ctx.send("Now you're not a candidate anymore")
             except:
@@ -92,10 +94,10 @@ class Election(commands.Cog):
         voter = inter.author
 
         # save the governor vote :)
-        if inter.values[0] in self.election_stuff["votes"][inter.author.id]:
-            self.election_stuff["votes"][inter.author.id].pop(inter.values[0])
+        if inter.values[0] in self.election_stuff["votes"][str(inter.author.id)]:
+            self.election_stuff["votes"][str(inter.author.id)].pop(inter.values[0])
         else:
-            self.election_stuff["votes"][inter.author.id].append(inter.values[0])
+            self.election_stuff["votes"][str(inter.author.id)].append(inter.values[0])
         self.save_election()
         
         await voter.send("Thank you for voting. Results will be announced on the 3rd of this month, on the same channel you got an @ everyone ping. (unless the bot breaks or something)")
@@ -105,10 +107,10 @@ class Election(commands.Cog):
         state = inter.values[0]
 
         # so you can't vote for the governor of all states
-        if inter.author.id in self.election_stuff["votes"]:
+        if str(inter.author.id) in self.election_stuff["votes"]:
             # the -1 index gets the last item
-            ye = self.election_stuff["votes"][inter.author.id][-1]
-            if len(self.election_stuff["votes"][inter.author.id]) == 2 and ye != f"Governor of {state}":
+            ye = self.election_stuff["votes"][str(inter.author.id)][-1]
+            if len(self.election_stuff["votes"][str(inter.author.id)]) == 2 and ye != f"Governor of {state}":
                 voter.send("You can't vote for the governor of multiple states!")
             else:
                 # find candidates for the governor of the user's state and make a cool dropdown
@@ -136,11 +138,11 @@ class Election(commands.Cog):
 
         # register president choice
         # vote will be edited if the user votes again
-        if inter.author.id in self.election_stuff["votes"]:
-            del self.election_stuff["votes"][inter.user.id]
-            self.election_stuff["votes"].update({inter.user.id: [inter.values[0]]})
+        if str(inter.author.id) in self.election_stuff["votes"]:
+            del self.election_stuff["votes"][str(inter.user.id)]
+            self.election_stuff["votes"].update({str(inter.user.id): [inter.values[0]]})
         else:
-            self.election_stuff["votes"].update({inter.user.id: [inter.values[0]]})
+            self.election_stuff["votes"].update({str(inter.user.id): [inter.values[0]]})
         self.save_election()
         
         # state dropdown
@@ -156,7 +158,9 @@ class Election(commands.Cog):
                 SelectOption(label="France 2.0", emoji="🥖"),
                 SelectOption(label="Berkelium", emoji="🅱️"),
                 SelectOption(label="The Moon™", emoji="🌚"),
-                SelectOption(label="Finger Island", emoji="👍")
+                SelectOption(label="Finger Island", emoji="👍"),
+                SelectOption(label="Noway", emoji="<:norway:1133172484733157396>"),
+                SelectOption(label="New Virginia (Chad)", emoji="<:chad:1133172417871741148>")
             ]
         )
         select.callback = self.choose_governor_callback
@@ -185,11 +189,11 @@ class Election(commands.Cog):
             view.add_item(select)
 
             # vote on dms :)
-            # try:
-            voter = ctx.author
-            await voter.send("Thanks for deciding to vote, this will shape the future of lelclub. Votes are secure and anonymous :)\n\nWho do you want to be the president?", view=view)
-            # except:
-                # await ctx.send(f"{ctx.author.mention} please enable DMs to be able to vote, then try again")
+            try:
+                voter = ctx.author
+                await voter.send("Thanks for deciding to vote, this will shape the future of lelclub. Votes are secure and anonymous :)\n\nWho do you want to be the president?", view=view)
+            except:
+                await ctx.send(f"{ctx.author.mention} please enable DMs to be able to vote, then try again\nIf DMs are enabled then the bot is broken and you should ping george washingmachine")
         else:
             await ctx.send("The election hasn't started! They do on the 1st of each month tho (unless the bot breaks)")
 
@@ -229,18 +233,6 @@ class Election(commands.Cog):
             
             
             
-            states = [
-                "Claps",
-                "Lelcenter",
-                "Poop HQ",
-                "Ben State",
-                "Breat Gritain",
-                "Builders of La Grasa",
-                "France 2.0",
-                "Berkelium",
-                "Finger Island",
-                "The Moon™"
-            ]
 
             # do the same for each state
             # too lazy to make this less shit it's 1 am
@@ -345,6 +337,26 @@ class Election(commands.Cog):
                     governor_choice = vote[1].split(":")[1]
                     gmoon[str(governor_choice)] += 1
             
+            gnoway = {}
+            for user, roles in self.election_stuff["candidates"].items():
+                if "Governor of Noway" in roles:
+                    gnoway.update({str(user): 0})
+
+            for voter, vote in self.election_stuff["votes"].items():
+                if "Noway" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
+                    gnoway[str(governor_choice)] += 1
+            
+            gchad = {}
+            for user, roles in self.election_stuff["candidates"].items():
+                if "Governor of New Virginia (Chad)" in roles:
+                    gchad.update({str(user): 0})
+
+            for voter, vote in self.election_stuff["votes"].items():
+                if "Chad" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
+                    gchad[str(governor_choice)] += 1
+            
             # sort stuff :)
             # just using sorted() turns the vote dictionary into a list
             # the last 100 lines were pure suffering
@@ -359,6 +371,8 @@ class Election(commands.Cog):
             gbk = dict(sorted(gbk.items(), key=lambda x:x[1], reverse=True))
             gfinger = dict(sorted(gfinger.items(), key=lambda x:x[1], reverse=True))
             gmoon = dict(sorted(gmoon.items(), key=lambda x:x[1], reverse=True))
+            gnoway = dict(sorted(gnoway.items(), key=lambda x:x[1], reverse=True))
+            gchad = dict(sorted(gchad.items(), key=lambda x:x[1], reverse=True))
 
             # make cool embeds for the results :)
             president_results = discord.Embed(title="President Results", description="")
@@ -372,6 +386,8 @@ class Election(commands.Cog):
             berkelium_results = discord.Embed(title="Berkelium Results", description="")
             finger_results = discord.Embed(title="Finger Island Results", description="")
             moon_results = discord.Embed(title="The Moon™ Results", description="")
+            noway_results = discord.Embed(title="Noway Results", description="")
+            chad_results = discord.Embed(title="New Virginia (Chad) Results", description="")
 
             # more pain
             print(f"new maybe presidents: {maybe_presidents}")
@@ -397,6 +413,10 @@ class Election(commands.Cog):
                 finger_results.description += f"<@{candidate}>: {votes} votes\n"
             for candidate, votes in gmoon.items():
                 moon_results.description += f"<@{candidate}>: {votes} votes\n"
+            for candidate, votes in gnoway.items():
+                noway_results.description += f"<@{candidate}>: {votes} votes\n"
+            for candidate, votes in gchad.items():
+                chad_results.description += f"<@{candidate}>: {votes} votes\n"
             
             # this is really dumb
             await ctx.send(embeds=[
@@ -411,7 +431,12 @@ class Election(commands.Cog):
                 finger_results,
                 moon_results
             ])
-            await ctx.send(embed=president_results)
+            # there's an embed limit lol
+            await ctx.send(embeds=[
+                noway_results,
+                chad_results,
+                president_results
+            ])
 
             # i removed this so i don't have to handle ties lol
             """# one final announcement

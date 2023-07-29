@@ -50,7 +50,7 @@ class Election(commands.Cog):
         select = Select(
             custom_id="roles",
             placeholder="Choose a role",
-            max_values=13,
+            max_values=14,
             options=[
                 SelectOption(label="President", emoji="🧑‍💼"),
                 SelectOption(label="Governor of Claps", emoji="👏"),
@@ -64,7 +64,8 @@ class Election(commands.Cog):
                 SelectOption(label="Governor of The Moon™", emoji="🌚"),
                 SelectOption(label="Governor of Finger Island", emoji="👍"),
                 SelectOption(label="Governor of Noway", emoji="<:norway:1133172484733157396>"),
-                SelectOption(label="Governor of New Virginia (Chad)", emoji="<:chad:1133172417871741148>")
+                SelectOption(label="Governor of New Virginia (Chad)", emoji="<:chad:1133172417871741148>"),
+                SelectOption(label="Governor of India", emoji="<:india:1134554468046868610>")
             ]
         )
 
@@ -160,7 +161,8 @@ class Election(commands.Cog):
                 SelectOption(label="The Moon™", emoji="🌚"),
                 SelectOption(label="Finger Island", emoji="👍"),
                 SelectOption(label="Noway", emoji="<:norway:1133172484733157396>"),
-                SelectOption(label="New Virginia (Chad)", emoji="<:chad:1133172417871741148>")
+                SelectOption(label="New Virginia (Chad)", emoji="<:chad:1133172417871741148>"),
+                SelectOption(label="India", emoji="<:india:1134554468046868610>")
             ]
         )
         select.callback = self.choose_governor_callback
@@ -357,6 +359,16 @@ class Election(commands.Cog):
                     governor_choice = vote[1].split(":")[1]
                     gchad[str(governor_choice)] += 1
             
+            gindia = {}
+            for user, roles in self.election_stuff["candidates"].items():
+                if "Governor of India" in roles:
+                    gindia.update({str(user): 0})
+
+            for voter, vote in self.election_stuff["votes"].items():
+                if "India" in vote[1]:
+                    governor_choice = vote[1].split(":")[1]
+                    gindia[str(governor_choice)] += 1
+            
             # sort stuff :)
             # just using sorted() turns the vote dictionary into a list
             # the last 100 lines were pure suffering
@@ -373,6 +385,7 @@ class Election(commands.Cog):
             gmoon = dict(sorted(gmoon.items(), key=lambda x:x[1], reverse=True))
             gnoway = dict(sorted(gnoway.items(), key=lambda x:x[1], reverse=True))
             gchad = dict(sorted(gchad.items(), key=lambda x:x[1], reverse=True))
+            gindia = dict(sorted(gindia.items(), key=lambda x:x[1], reverse=True))
 
             # make cool embeds for the results :)
             president_results = discord.Embed(title="President Results", description="")
@@ -388,6 +401,7 @@ class Election(commands.Cog):
             moon_results = discord.Embed(title="The Moon™ Results", description="")
             noway_results = discord.Embed(title="Noway Results", description="")
             chad_results = discord.Embed(title="New Virginia (Chad) Results", description="")
+            india_results = discord.Embed(title="India Results", description="")
 
             # more pain
             print(f"new maybe presidents: {maybe_presidents}")
@@ -417,6 +431,8 @@ class Election(commands.Cog):
                 noway_results.description += f"<@{candidate}>: {votes} votes\n"
             for candidate, votes in gchad.items():
                 chad_results.description += f"<@{candidate}>: {votes} votes\n"
+            for candidate, votes in gindia.items():
+                india_results.description += f"<@{candidate}>: {votes} votes\n"
             
             # this is really dumb
             await ctx.send(embeds=[
@@ -435,6 +451,7 @@ class Election(commands.Cog):
             await ctx.send(embeds=[
                 noway_results,
                 chad_results,
+                india_results,
                 president_results
             ])
 

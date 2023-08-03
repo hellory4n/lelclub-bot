@@ -21,7 +21,7 @@ async def on_ready():
 
 @client.command()
 async def ping(ctx):
-    await ctx.send(f"i'm definitely alive: latency is {round(client.latency * 1000)} ms")
+    await ctx.send(f"i'm definitely alive")
 
 @client.command()
 async def help(ctx):

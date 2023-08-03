@@ -5,6 +5,9 @@ import os
 import asyncio
 import json
 import random
+import dotenv
+
+dotenv.load_dotenv(".env")
 
 epic_cool_intents = discord.Intents.default()
 epic_cool_intents.message_content = True

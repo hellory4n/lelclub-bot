@@ -45,6 +45,7 @@ class EconomyBasics(commands.Cog):
 
 
     @commands.command()
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def work(self, ctx):
         # get work payout
         min = 0
@@ -76,6 +77,15 @@ class EconomyBasics(commands.Cog):
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         
         await ctx.send(embed=embed)
+    
+    # cool cooldown message :)
+    @work.error
+    async def command_name_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            embed = discord.Embed(description=f"You cannot work for {error.retry_after:.2f}s.",
+                                  color=discord.Color(0xff4865))
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):
     client.add_cog(EconomyBasics(client))

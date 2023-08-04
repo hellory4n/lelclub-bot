@@ -1,9 +1,10 @@
 import disnake as discord
-from disnake import Embed
+from disnake import Embed, Button, ButtonStyle
+from discord.ui import View
 from disnake.ext import commands
-import os
 import json
 from .economy_basics import EconomyBasics
+import asyncio
 
 class Wallets(commands.Cog):
     def __init__(self, client: commands.Bot):
@@ -29,6 +30,8 @@ class Wallets(commands.Cog):
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=embed)
     
+
+
     @commands.command(aliases=["dep"])
     async def deposit(self, ctx, amount, wallet):
         EconomyBasics.setup_user(ctx.author.id)
@@ -71,6 +74,8 @@ class Wallets(commands.Cog):
                                 color=discord.Color(0xff4865))
                 await ctx.send(embed=embed)
     
+
+
     @commands.command(aliases=["with"])
     async def withdraw(self, ctx, amount, wallet):
         EconomyBasics.setup_user(ctx.author.id)
@@ -112,6 +117,42 @@ class Wallets(commands.Cog):
                 embed = Embed(title="Error", description="Are you sure the arguments are numbers?", 
                                 color=discord.Color(0xff4865))
                 await ctx.send(embed=embed)
+    
+
+
+
+    @commands.command(aliases=["remove-wallet", "delete-wallet", "remove_wallet"])
+    async def delete_wallet(self, ctx, *, wallet):
+        pain = {}
+        with open(f"data/money/{ctx.author.id}.json", "r") as f:
+            pain = json.load(f)
+        
+        # find wallet
+        if not wallet in pain["wallets"]:
+            embed = Embed(title="Error", description=f"Wallet `{wallet}` not found.", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+        else:
+            # we need to ask the user to confirm cuz yes
+            embed = Embed(description=f"Are you sure you want to delete {wallet}? **BS {pain['wallets'][wallet]:,.2f}** will be permanently lost!\n\nSend \"y\" to confirm.",
+                          color=discord.Color(0xff4865))
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            yes = await ctx.send(embed=embed)
+
+            def check(message):
+                return message.author == ctx.author and str(message.content) == "y"
+
+            try:
+                reply = await self.client.wait_for('message', timeout=10.0, check=check)
+            except asyncio.TimeoutError:
+                await yes.edit(content="Operation cancelled.", embed=None)
+            else:
+                del pain["wallets"][wallet]
+                with open(f"data/money/{ctx.author.id}.json", "w") as f:
+                    json.dump(pain, f)
+
+                await ctx.send(f"{wallet} is now gone.")
+            
 
 def setup(client: commands.Bot):
     client.add_cog(Wallets(client))

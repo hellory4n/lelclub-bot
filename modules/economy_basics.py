@@ -3,6 +3,7 @@ from disnake import Embed
 from disnake.ext import commands
 import os
 import json
+import random
 
 class EconomyBasics(commands.Cog):
     def __init__(self, client: commands.Bot):
@@ -37,7 +38,31 @@ class EconomyBasics(commands.Cog):
         with open(f"data/money/{user.id}.json", "r") as f:
             moneys = json.load(f)["money"]
         
-        embed = Embed(title="Balance", description=f"{user.mention} has B$ {moneys:,}")
+        embed = Embed(title=user.name, description=f"{user.mention} has B$ {moneys:,}")
+        await ctx.send(embed=embed)
+
+
+
+    @commands.command()
+    async def work(self, ctx):
+        moneys = random.randint(20, 150)
+        replies = [
+            f"You saved entire lelclub by throwing poop at people and got B$ {moneys} from government",
+            f"you exploded thousands of things and magically got B$ {moneys}",
+            f"you did ***something*** and got B$ {moneys}",
+            f"you said \"flying spaghetti monster please give me lelgolds :place_of_worship: :place_of_worship: :place_of_worship:\" and magically got B$ {moneys}",
+            f"you printed monis and got B$ {moneys}",
+        ]
+
+        # this does something 
+        with open(f"data/money/{ctx.author.id}.json", "r+") as f:
+            pain = json.load(f)["money"]
+            pain += moneys
+            f.seek(0)
+            f.write(json.dumps({"money": pain}))
+            f.truncate()
+
+        embed = Embed(title=ctx.author.name, description=random.choice(replies))
         await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):

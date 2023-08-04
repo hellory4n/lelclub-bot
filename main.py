@@ -1,5 +1,4 @@
 import disnake as discord
-from disnake import app_commands
 from disnake.ext import commands, tasks
 import os
 import asyncio

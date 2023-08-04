@@ -37,8 +37,9 @@ class EconomyBasics(commands.Cog):
         moneys = 0
         with open(f"data/money/{user.id}.json", "r") as f:
             moneys = json.load(f)["money"]
-        
-        embed = Embed(title=user.name, description=f"{user.mention} has B$ {moneys:,}")
+
+        embed = Embed(description=f"{user.mention} has B$ {moneys:,}", color=discord.Color(0x008cff))
+        embed.set_author(name=user.name, icon_url=user.display_avatar.url)
         await ctx.send(embed=embed)
 
 
@@ -62,7 +63,9 @@ class EconomyBasics(commands.Cog):
             f.write(json.dumps({"money": pain}))
             f.truncate()
 
-        embed = Embed(title=ctx.author.name, description=random.choice(replies))
+        embed = Embed(description=random.choice(replies), color=discord.Color(0x3eba49))
+        embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url)
+        
         await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):

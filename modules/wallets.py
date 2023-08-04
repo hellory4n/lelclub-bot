@@ -70,6 +70,48 @@ class Wallets(commands.Cog):
                 embed = Embed(title="Error", description="Are you sure the arguments are numbers?", 
                                 color=discord.Color(0xff4865))
                 await ctx.send(embed=embed)
+    
+    @commands.command(aliases=["with"])
+    async def withdraw(self, ctx, amount, wallet):
+        EconomyBasics.setup_user(ctx.author.id)
+
+        pain = {}
+        with open(f"data/money/{ctx.author.id}.json", "r") as f:
+            pain = json.load(f)
+        
+        # find wallet
+        if not wallet in pain["wallets"]:
+            embed = Embed(title="Error", description=f"Wallet `{wallet}` not found. (If the name has spaces then put it in quotes, example: `l.deposit 69 \"cool wallet\"`)", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+        else:
+            try:
+                # so you can use l.dep all "cool wallet"
+                withdraw = 0
+                if amount == "all":
+                    withdraw = pain["wallets"][wallet]
+                else:
+                    withdraw = float(amount)
+
+                if pain["wallets"][wallet] >= withdraw:
+                    pain["money"] += withdraw
+                    pain["wallets"][wallet] -= withdraw
+
+                    with open(f"data/money/{ctx.author.id}.json", "w") as f:
+                        json.dump(pain, f)
+                    
+                    embed = Embed(description=f"Successfully withdrawn B$ {withdraw:,.2f} from {wallet}", 
+                                    color=discord.Color(0x3eba49))
+                    embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)                        
+                    await ctx.send(embed=embed)
+                else:
+                    embed = Embed(title="Error", description=f"You only have {pain['wallet'][wallet]:,.2f} in {pain[wallet]}!", 
+                                    color=discord.Color(0xff4865))
+                    await ctx.send(embed=embed)
+            except:
+                embed = Embed(title="Error", description="Are you sure the arguments are numbers?", 
+                                color=discord.Color(0xff4865))
+                await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):
     client.add_cog(Wallets(client))

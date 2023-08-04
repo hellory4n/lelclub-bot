@@ -19,7 +19,7 @@ class EconomyBasics(commands.Cog):
         user = str(user_id)
 
         if not os.path.exists(f"data/money/{user}.json"):
-            init = {"money": 0}
+            init = {"money": 0.00}
             with open(f"data/money/{user}.json", "w+") as json_file:
                 json.dump(init, json_file)
     
@@ -34,19 +34,28 @@ class EconomyBasics(commands.Cog):
             user = ctx.author
         self.setup_user(user.id)
 
-        moneys = 0
+        moneys = 0.00
         with open(f"data/money/{user.id}.json", "r") as f:
             moneys = json.load(f)["money"]
 
-        embed = Embed(description=f"{user.mention} has B$ {moneys:,}", color=discord.Color(0x008cff))
-        embed.set_author(name=user.name, icon_url=user.display_avatar.url)
+        embed = Embed(description=f"{user.mention} has B$ {moneys:,.2f}", color=discord.Color(0x008cff))
+        embed.set_author(name=user.display_name, icon_url=user.display_avatar.url)
         await ctx.send(embed=embed)
 
 
 
     @commands.command()
     async def work(self, ctx):
-        moneys = random.randint(20, 150)
+        # get work payout
+        min = 0
+        max = 0
+        with open(f"data/economic_policies.json", "r") as f:
+            m = json.load(f)
+            min = m["work_min"]
+            max = m["work_max"]
+
+        # getting B$ 36.81 wouldn't look nice
+        moneys = random.randint(int(min), int(max))
         replies = [
             f"You saved entire lelclub by throwing poop at people and got B$ {moneys} from government",
             f"you exploded thousands of things and magically got B$ {moneys}",
@@ -64,7 +73,7 @@ class EconomyBasics(commands.Cog):
             f.truncate()
 
         embed = Embed(description=random.choice(replies), color=discord.Color(0x3eba49))
-        embed.set_author(name=ctx.author.name, icon_url=ctx.author.display_avatar.url)
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         
         await ctx.send(embed=embed)
 

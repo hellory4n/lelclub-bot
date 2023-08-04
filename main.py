@@ -51,8 +51,5 @@ async def suffering():
     ]
     await client.change_presence(activity=discord.Game(f"{random.choice(pain)} on Is Tim"))
 
-async def main():
-    client.load_extensions("./modules/")
-    await client.start(cool_token)
-
-asyncio.run(main())
+client.load_extensions("./modules/")
+client.run(cool_token)

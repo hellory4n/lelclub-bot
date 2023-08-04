@@ -47,6 +47,8 @@ class EconomyBasics(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def work(self, ctx):
+        self.setup_user(ctx.author.id)
+
         # get work payout
         min = 0
         max = 0

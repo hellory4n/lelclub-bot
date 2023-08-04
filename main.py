@@ -10,7 +10,7 @@ dotenv.load_dotenv(".env")
 
 epic_cool_intents = discord.Intents.default()
 epic_cool_intents.message_content = True
-client = commands.Bot(command_prefix=commands.when_mentioned_or("l."), intents=epic_cool_intents)
+client = commands.Bot(command_prefix=commands.when_mentioned_or("l-"), intents=epic_cool_intents)
 client.remove_command("help")
 
 @client.event

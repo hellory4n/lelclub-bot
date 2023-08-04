@@ -13,13 +13,14 @@ class EconomyBasics(commands.Cog):
     async def on_ready(self):
         print("economy basics cog loaded")
 
-    def setup_user(self, user_id: int):
+    @staticmethod
+    def setup_user(user_id: int):
         """Creates the files necessary for a user to function in the economy if they don't exist"""
 
         user = str(user_id)
 
         if not os.path.exists(f"data/money/{user}.json"):
-            init = {"money": 0.00}
+            init = {"money": 0.00, "wallets": {}}
             with open(f"data/money/{user}.json", "w+") as json_file:
                 json.dump(init, json_file)
     
@@ -69,15 +70,14 @@ class EconomyBasics(commands.Cog):
 
         # this does something 
         with open(f"data/money/{ctx.author.id}.json", "r+") as f:
-            pain = json.load(f)["money"]
-            pain += moneys
+            pain = json.load(f)
+            pain["money"] += moneys
             f.seek(0)
-            f.write(json.dumps({"money": pain}))
+            f.write(json.dumps(pain))
             f.truncate()
 
         embed = Embed(description=random.choice(replies), color=discord.Color(0x3eba49))
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-        
         await ctx.send(embed=embed)
     
     # cool cooldown message :)

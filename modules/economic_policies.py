@@ -12,7 +12,7 @@ class EconomicPolicies(commands.Cog):
     async def on_ready(self):
         print("economic policies cog loaded")
 
-    @commands.command()
+    @commands.command(aliases=["work-payout"])
     async def work_payout(self, ctx, min, max):
         # only the ceo of economy can use this
         role = discord.utils.get(ctx.message.guild.roles, name='CEO of economy')

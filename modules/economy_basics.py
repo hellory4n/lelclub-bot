@@ -35,12 +35,23 @@ class EconomyBasics(commands.Cog):
             user = ctx.author
         self.setup_user(user.id)
 
-        moneys = 0.00
+        yes = {}
         with open(f"data/money/{user.id}.json", "r") as f:
-            moneys = json.load(f)["money"]
+            yes = json.load(f)
 
-        embed = Embed(description=f"{user.mention} has B$ {moneys:,.2f}", color=discord.Color(0x008cff))
+        embed = Embed(color=discord.Color(0x008cff))
         embed.set_author(name=user.display_name, icon_url=user.display_avatar.url)
+        embed.description = f"**Cash**: B$ {yes['money']:,.2f}\n"
+
+        # now get the cool wallets
+        total = yes["money"]
+        thej = ""
+        for name, value in yes["wallets"].items():
+            thej += f"**{name}**: B$ {value:,.2f}\n"
+            total += value
+        
+        embed.description += f"{thej}**Total**: B$ {total:,.2f}"
+
         await ctx.send(embed=embed)
 
 

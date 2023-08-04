@@ -99,6 +99,43 @@ class EconomyBasics(commands.Cog):
                                   color=discord.Color(0xff4865))
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             await ctx.send(embed=embed)
+    
+
+
+    @commands.command(aliases=["give-money", "give_money"])
+    async def pay(self, ctx, user: discord.User, amount: float):
+        self.setup_user(ctx.author.id)
+        self.setup_user(user.id)
+
+        # does the author have moneys?
+        author_moneys = 0
+        with open(f"data/money/{ctx.author.id}.json", "r") as f:
+            author_moneys = json.load(f)["money"]
+        
+        if author_moneys >= amount:
+            # yes.
+            with open(f"data/money/{ctx.author.id}.json", "r+") as f:
+                pain = json.load(f)
+                pain["money"] -= amount
+                f.seek(0)
+                f.write(json.dumps(pain))
+                f.truncate()
+            
+            with open(f"data/money/{user.id}.json", "r+") as f:
+                pain = json.load(f)
+                pain["money"] += amount
+                f.seek(0)
+                f.write(json.dumps(pain))
+                f.truncate()
+            
+            embed = Embed(description=f"Successfully transfered B$ {amount:,.2f} to {user.mention}.",
+                          color=discord.Color(0x3eba49))
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            await ctx.send(embed=embed)
+        else:
+            embed = Embed(title="Error", description=f"You don't have that amount in cash!", 
+                          color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):
     client.add_cog(EconomyBasics(client))

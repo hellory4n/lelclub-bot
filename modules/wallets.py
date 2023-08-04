@@ -123,6 +123,8 @@ class Wallets(commands.Cog):
 
     @commands.command(aliases=["remove-wallet", "delete-wallet", "remove_wallet"])
     async def delete_wallet(self, ctx, *, wallet):
+        EconomyBasics.setup_user(ctx.author.id)
+
         pain = {}
         with open(f"data/money/{ctx.author.id}.json", "r") as f:
             pain = json.load(f)

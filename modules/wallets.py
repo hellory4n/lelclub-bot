@@ -14,7 +14,7 @@ class Wallets(commands.Cog):
     async def on_ready(self):
         print("wallet cog loaded")
 
-    @commands.command(aliases=["create-wallet", "add-wallet", "add_wallet"])
+    @commands.command(aliases=["create-wallet", "add-wallet", "add_wallet", "new_wallet", "new-wallet"])
     async def create_wallet(self, ctx, *, name):
         EconomyBasics.setup_user(ctx.author.id)
 

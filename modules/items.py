@@ -160,6 +160,146 @@ class Items(commands.Cog):
         embed = Embed(color=0x008cff, description="You will answer a form to create the store item. Press the button below to continue.")
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=embed, view=self.NewItem(client=self.client))
+    
+
+
+    class EditItem(View):
+        def __init__(self, *, timeout: float | None = 180, client: commands.Bot, name: str) -> None:
+            super().__init__(timeout=timeout)
+            self.client = client
+            self.name = name
+
+        @discord.ui.button(label="Start", style=ButtonStyle.blurple)
+        async def receive(self, button: Button, inter: discord.MessageInteraction):
+            await inter.response.send_modal(
+                title="Edit Item",
+                custom_id="edit_item",
+                components=[
+                    TextInput(
+                        label="Price",
+                        placeholder="69.42",
+                        custom_id="price",
+                        style=TextInputStyle.short,
+                        min_length=1,
+                        max_length=25,
+                        required=False
+                    ),
+                    TextInput(
+                        label="Description",
+                        placeholder="This is one of the items of all time.",
+                        custom_id="description",
+                        style=TextInputStyle.short,
+                        min_length=1,
+                        max_length=100,
+                        required=False
+                    ),
+                    TextInput(
+                        label="Stock",
+                        placeholder="Leave empty if there's unlimited stock",
+                        custom_id="stock",
+                        style=TextInputStyle.short,
+                        min_length=1,
+                        max_length=25,
+                        required=False
+                    ),
+                    TextInput(
+                        label="Wallet",
+                        placeholder="Use if you have a wallet for your company",
+                        custom_id="wallet",
+                        style=TextInputStyle.short,
+                        min_length=1,
+                        max_length=100,
+                        required=False
+                    )
+                ],
+            )
+
+            try:
+                modal_inter: discord.ModalInteraction = await self.client.wait_for(
+                    "modal_submit",
+                    check=lambda i: i.custom_id == "edit_item" and i.author.id == inter.author.id,
+                    timeout=1000,
+                )
+            except asyncio.TimeoutError:
+                return
+
+            price_ = modal_inter.text_values["price"]
+            description = modal_inter.text_values["description"]
+            stock_ = modal_inter.text_values["stock"]
+            wallet = modal_inter.text_values["wallet"]
+
+            # make sure things the price and stock are valid
+            price = 0
+            stock = 0
+            try:
+                if price_ == "":
+                    price = -1
+                else:
+                    price = float(price_)
+
+                if stock_ == "":
+                    stock = -1
+                else:
+                    stock = int(stock_)
+            except:
+                embed = Embed(title="Error",
+                              description="Invalid price or stock. Are you sure these are valid numbers?",
+                              color=discord.Color(0xff4865))
+                await modal_inter.response.send_message(embed=embed)
+                return
+
+            # make sure the wallet exists and stuff
+            if wallet != "":
+                bruh = {}
+                with open(f"data/money/{modal_inter.author.id}.json", "r") as f:
+                    bruh = json.load(f)
+                
+                if not wallet in bruh["wallets"]:
+                    embed = Embed(title="Error",
+                                description=f"Wallet `{wallet}` not found. (remember to leave it empty for the cash wallet)",
+                                color=discord.Color(0xff4865))
+                    await modal_inter.response.send_message(embed=embed)
+                    return
+            else:
+                wallet = ""
+
+            # now we actually edit the item :)
+            with open(f"data/shop.json", "r+") as f:
+                pain = json.load(f)
+                if description != "":
+                    pain[self.name]["description"] = description
+                if price != -1:
+                    pain[self.name]["price"] = price
+                if stock != -1:
+                    pain[self.name]["stock"] = stock
+                if wallet != "":
+                    pain[self.name]["wallet"] = wallet
+                f.seek(0)
+                f.write(json.dumps(pain))
+                f.truncate()
+
+            embed = Embed(description=f"Successfully edited item `{self.name}`", color=discord.Color(0x3eba49))
+            embed.set_author(name=modal_inter.author.display_name, icon_url=modal_inter.author.display_avatar.url)
+            await modal_inter.response.send_message(embed=embed)
+
+    @commands.command(aliases=["edit-item"])
+    async def edit_item(self, ctx: commands.Context, *, name: str):
+        EconomyBasics.setup_user(ctx.author.id)
+
+        pain = {}
+        with open("data/shop.json", "r") as f:
+            pain = json.load(f)
+        
+        if not name in pain:
+            embed = Embed(title="Error",
+                          description=f"Item `{name}` not found.",
+                          color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+        else:
+            embed = Embed(color=0x008cff,
+                          description="You will answer a form to edit the item. Leave empty anything you don't want to change. Press the button below to continue.\n\nNOTE: The name can't be changed due to technical limitations.")
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            await ctx.send(embed=embed, view=self.EditItem(client=self.client, name=name))
 
 def setup(client: commands.Bot):
     client.add_cog(Items(client))

@@ -300,6 +300,42 @@ class Items(commands.Cog):
                           description="You will answer a form to edit the item. Leave empty anything you don't want to change. Press the button below to continue.\n\nNOTE: The name can't be changed due to technical limitations.")
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             await ctx.send(embed=embed, view=self.EditItem(client=self.client, name=name))
+    
+
+
+    @commands.command(aliases=["remove-item", "delete-item", "remove_item"])
+    async def delete_item(self, ctx, *, item):
+        EconomyBasics.setup_user(ctx.author.id)
+
+        pain = {}
+        with open(f"data/shop.json", "r") as f:
+            pain = json.load(f)
+        
+        # find item
+        if not item in pain:
+            embed = Embed(title="Error", description=f"Wallet `{item}` not found.", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+        else:
+            # we need to ask the user to confirm cuz yes
+            embed = Embed(description=f"Are you sure you want to delete {item}? Keep in mind that some users might still own this item.\n\nSend \"y\" to confirm.",
+                          color=discord.Color(0xff4865))
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            yes = await ctx.send(embed=embed)
+
+            def check(message):
+                return message.author == ctx.author and str(message.content) == "y"
+
+            try:
+                reply = await self.client.wait_for('message', timeout=10.0, check=check)
+            except asyncio.TimeoutError:
+                await yes.edit(content="Operation cancelled.", embed=None)
+            else:
+                del pain[item]
+                with open(f"data/shop.json", "w") as f:
+                    json.dump(pain, f)
+
+                await ctx.send(f"{item} is now gone.")
 
 def setup(client: commands.Bot):
     client.add_cog(Items(client))

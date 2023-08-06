@@ -92,7 +92,7 @@ class Items(commands.Cog):
             stock = 0
             try:
                 price = float(price_)
-                if (stock_ == None):
+                if (stock_ == ""):
                     stock = -1
                 else:
                     stock = int(stock_)
@@ -104,7 +104,7 @@ class Items(commands.Cog):
                 return
 
             # make sure the wallet exists and stuff
-            if wallet is not None:
+            if wallet != "":
                 bruh = {}
                 with open(f"data/money/{modal_inter.author.id}.json", "r") as f:
                     bruh = json.load(f)
@@ -118,17 +118,29 @@ class Items(commands.Cog):
             else:
                 wallet = ""
 
+            stock_but_the_user_sees_it = ""
+            if stock == -1:
+                stock_but_the_user_sees_it == "unlimited"
+            else:
+                stock_but_the_user_sees_it = f"{stock:,.2f}"
+            
+            wallet_but_the_user_sees_it = ""
+            if wallet == "":
+                wallet_but_the_user_sees_it = "Cash"
+            else:
+                wallet_but_the_user_sees_it = wallet
+
             # now we actually add the item :)
             with open(f"data/shop.json", "r+") as f:
                 pain = json.load(f)
-                pain.append({
-                    "name": name,
-                    "author": modal_inter.author.id,
-                    "price": price,
-                    "description": description,
-                    "stock": stock,
-                    "wallet": wallet
-
+                pain.update({
+                    name: {
+                        "author": modal_inter.author.id,
+                        "price": price,
+                        "description": description,
+                        "stock": stock,
+                        "wallet": wallet
+                    }
                 })
                 f.seek(0)
                 f.write(json.dumps(pain))
@@ -138,8 +150,8 @@ class Items(commands.Cog):
             embed.set_author(name=modal_inter.author.display_name, icon_url=modal_inter.author.display_avatar.url)
             embed.add_field(name="Price", value=f"B$ {price:,.2f}", inline=True)
             embed.add_field(name="Description", value=description, inline=True)
-            embed.add_field(name="Stock", value=f"{stock:,}", inline=True)
-            embed.add_field(name="Wallet", value=wallet, inline=True)
+            embed.add_field(name="Stock", value=stock_but_the_user_sees_it, inline=True)
+            embed.add_field(name="Wallet", value=wallet_but_the_user_sees_it, inline=True)
             await modal_inter.response.send_message(embed=embed)
 
     @commands.command(aliases=["create-item", "add-item", "add_item", "new-item", "new_item"])

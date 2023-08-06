@@ -149,6 +149,7 @@ class Wallets(commands.Cog):
             except asyncio.TimeoutError:
                 await yes.edit(content="Operation cancelled.", embed=None)
             else:
+                pain["total"] -= pain["wallets"][wallet]
                 del pain["wallets"][wallet]
                 with open(f"data/money/{ctx.author.id}.json", "w") as f:
                     json.dump(pain, f)

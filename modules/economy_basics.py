@@ -20,9 +20,34 @@ class EconomyBasics(commands.Cog):
         user = str(user_id)
 
         if not os.path.exists(f"data/money/{user}.json"):
-            init = {"money": 0.00, "wallets": {}}
+            init = {"money": 0.00, "total": 0.00, "wallets": {}}
             with open(f"data/money/{user}.json", "w+") as json_file:
                 json.dump(init, json_file)
+        
+        # for the leaderboard :)
+        with open("data/leaderboard.json", "r+") as lb_file:
+            pain = json.load(lb_file)
+            pain.update({user_id: 0.00})
+            lb_file.seek(0)
+            lb_file.write(json.dumps(pain))
+            lb_file.truncate()
+    
+    @staticmethod
+    def update_leaderboard(user_id: int):
+        """Updates the leaderboard file"""
+
+        bruh = 0.00
+        with open(f"data/money/{user_id}.json", "r") as user_file:
+            bruh = json.load(user_file)["total"]
+        
+        with open("data/leaderboard.json", "r+") as lb_file:
+            pain = json.load(lb_file)
+            pain[user_id] = bruh
+            lb_file.seek(0)
+            lb_file.write(json.dumps(pain))
+            lb_file.truncate()
+
+
     
     @commands.command(aliases=["bal", "money"])
     async def balance(self, ctx, user: discord.User = None):
@@ -83,9 +108,12 @@ class EconomyBasics(commands.Cog):
         with open(f"data/money/{ctx.author.id}.json", "r+") as f:
             pain = json.load(f)
             pain["money"] += moneys
+            pain["total"] += moneys
             f.seek(0)
             f.write(json.dumps(pain))
             f.truncate()
+        
+        self.update_leaderboard(ctx.author.id)
 
         embed = Embed(description=random.choice(replies), color=discord.Color(0x3eba49))
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
@@ -117,6 +145,7 @@ class EconomyBasics(commands.Cog):
             with open(f"data/money/{ctx.author.id}.json", "r+") as f:
                 pain = json.load(f)
                 pain["money"] -= amount
+                pain["total"] -= amount
                 f.seek(0)
                 f.write(json.dumps(pain))
                 f.truncate()
@@ -124,9 +153,13 @@ class EconomyBasics(commands.Cog):
             with open(f"data/money/{user.id}.json", "r+") as f:
                 pain = json.load(f)
                 pain["money"] += amount
+                pain["total"] += amount
                 f.seek(0)
                 f.write(json.dumps(pain))
                 f.truncate()
+            
+            self.update_leaderboard(ctx.author.id)
+            self.update_leaderboard(user.id)
             
             embed = Embed(description=f"Successfully transfered B$ {amount:,.2f} to {user.mention}.",
                           color=discord.Color(0x3eba49))

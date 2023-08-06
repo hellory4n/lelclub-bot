@@ -120,7 +120,7 @@ class Items(commands.Cog):
 
             stock_but_the_user_sees_it = ""
             if stock == -1:
-                stock_but_the_user_sees_it == "unlimited"
+                stock_but_the_user_sees_it = "unlimited"
             else:
                 stock_but_the_user_sees_it = f"{stock:,.2f}"
             
@@ -313,7 +313,7 @@ class Items(commands.Cog):
         
         # find item
         if not item in pain:
-            embed = Embed(title="Error", description=f"Wallet `{item}` not found.", 
+            embed = Embed(title="Error", description=f"Item `{item}` not found.", 
                             color=discord.Color(0xff4865))
             await ctx.send(embed=embed)
         else:
@@ -336,6 +336,40 @@ class Items(commands.Cog):
                     json.dump(pain, f)
 
                 await ctx.send(f"{item} is now gone.")
+    
+
+
+    @commands.command(aliases=["item-info"])
+    async def item_info(self, ctx: commands.Context, *, item: str):
+        pain = {}
+        with open(f"data/shop.json", "r") as f:
+            pain = json.load(f)
+        
+        # find item
+        if not item in pain:
+            embed = Embed(title="Error", description=f"Item `{item}` not found.", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+        else:
+            stock_but_the_user_sees_it = ""
+            if pain[item]["stock"] == -1:
+                stock_but_the_user_sees_it = "unlimited"
+            else:
+                stock_but_the_user_sees_it = f"{pain[item]['stock']:,.2f}"
+            
+            wallet_but_the_user_sees_it = ""
+            if pain[item]["wallet"] == "":
+                wallet_but_the_user_sees_it = "Cash"
+            else:
+                wallet_but_the_user_sees_it = pain[item]["wallet"]
+
+            embed = Embed(title=item, color=discord.Color(0x008cff))
+            embed.add_field(name="Author", value=f"<@{pain[item]['author']}>", inline=True)
+            embed.add_field(name="Price", value=f"B$ {pain[item]['price']:,.2f}", inline=True)
+            embed.add_field(name="Description", value=pain[item]['description'], inline=True)
+            embed.add_field(name="Stock", value=stock_but_the_user_sees_it, inline=True)
+            embed.add_field(name="Wallet", value=wallet_but_the_user_sees_it, inline=True)
+            await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):
     client.add_cog(Items(client))

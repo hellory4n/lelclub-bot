@@ -81,11 +81,65 @@ class Items(commands.Cog):
             except asyncio.TimeoutError:
                 return
 
-            tag_name = modal_inter.text_values["name"]
-            tag_content = modal_inter.text_values["content"]
+            name = modal_inter.text_values["name"]
+            price_ = modal_inter.text_values["price"]
+            description = modal_inter.text_values["description"]
+            stock_ = modal_inter.text_values["stock"]
+            wallet = modal_inter.text_values["wallet"]
 
-            embed = discord.Embed(title=f"Tag created: `{tag_name}`")
-            embed.add_field(name="Content", value=tag_content)
+            # make sure things the price and stock are valid
+            price = 0
+            stock = 0
+            try:
+                price = float(price_)
+                if (stock_ == None):
+                    stock = -1
+                else:
+                    stock = int(stock_)
+            except:
+                embed = Embed(title="Error",
+                              description="Invalid price or stock. Are you sure these are valid numbers?",
+                              color=discord.Color(0xff4865))
+                await modal_inter.response.send_message(embed=embed)
+                return
+
+            # make sure the wallet exists and stuff
+            if wallet is not None:
+                bruh = {}
+                with open(f"data/money/{modal_inter.author.id}.json", "r") as f:
+                    bruh = json.load(f)
+                
+                if not wallet in bruh["wallets"]:
+                    embed = Embed(title="Error",
+                                description=f"Wallet `{wallet}` not found. (remember to leave it empty for the cash wallet)",
+                                color=discord.Color(0xff4865))
+                    await modal_inter.response.send_message(embed=embed)
+                    return
+            else:
+                wallet = ""
+
+            # now we actually add the item :)
+            with open(f"data/shop.json", "r+") as f:
+                pain = json.load(f)
+                pain.append({
+                    "name": name,
+                    "author": modal_inter.author.id,
+                    "price": price,
+                    "description": description,
+                    "stock": stock,
+                    "wallet": wallet
+
+                })
+                f.seek(0)
+                f.write(json.dumps(pain))
+                f.truncate()
+
+            embed = Embed(description=f"Successfully created item `{name}`", color=discord.Color(0x3eba49))
+            embed.set_author(name=modal_inter.author.display_name, icon_url=modal_inter.author.display_avatar.url)
+            embed.add_field(name="Price", value=f"B$ {price:,.2f}", inline=True)
+            embed.add_field(name="Description", value=description, inline=True)
+            embed.add_field(name="Stock", value=f"{stock:,}", inline=True)
+            embed.add_field(name="Wallet", value=wallet, inline=True)
             await modal_inter.response.send_message(embed=embed)
 
     @commands.command(aliases=["create-item", "add-item", "add_item", "new-item", "new_item"])

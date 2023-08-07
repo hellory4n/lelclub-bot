@@ -26,6 +26,11 @@ class EconomyBasics(commands.Cog):
             with open(f"data/money/{user}.json", "w+") as json_file:
                 json.dump(init, json_file)
         
+        if not os.path.exists(f"data/items/{user}.json"):
+            init = {}
+            with open(f"data/items/{user}.json", "w+") as json_file:
+                json.dump(init, json_file)
+        
         # for the leaderboard :)
         with open("data/leaderboard.json", "r+") as lb_file:
             pain = json.load(lb_file)

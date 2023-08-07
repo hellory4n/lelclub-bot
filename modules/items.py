@@ -370,6 +370,99 @@ class Items(commands.Cog):
             embed.add_field(name="Stock", value=stock_but_the_user_sees_it, inline=True)
             embed.add_field(name="Wallet", value=wallet_but_the_user_sees_it, inline=True)
             await ctx.send(embed=embed)
+    
+
+
+    @commands.command(aliases=["purchase", "get"])
+    async def buy(self, ctx: commands.Context, item: str, amount: int = 1):
+        EconomyBasics.setup_user(ctx.author.id)
+
+        # does the item exist?
+        pain = {}
+        with open(f"data/shop.json", "r") as f:
+            pain = json.load(f)
+        
+        if not item in pain:
+            embed = Embed(title="Error", description=f"Item `{item}` not found.\n (If the name has spaces then put it in quotes, example: `l.buy \"cool item\"`)", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+            return
+
+        # make sure there's enough stock
+        if not pain[item]["stock"] == -1:
+            if amount > pain[item]["stock"]:
+                embed = Embed(title="Error", description=f"The stock available for this item is only {pain[item]['stock']:,.2f}", 
+                              color=discord.Color(0xff4865))
+                await ctx.send(embed=embed)
+                return
+
+        # make sure the payment info is valid and stuff
+        seller = {}
+        
+        try:
+            with open(f"data/money/{pain[item]['author']}.json", "r") as f:
+                seller = json.load(f)
+            if pain[item]["wallet"] != "":
+                if pain[item]["wallet"] not in seller["wallets"]:
+                    raise "bruh"
+        except:
+            embed = Embed(title="Error", description="Payment info from the seller seems incorrect.",
+                          color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+            return
+
+        # make sure the user can actually afford this item
+        price = pain[item]["price"] * amount
+        buyer = {}
+        with open(f"data/money/{ctx.author.id}.json", "r") as f:
+            buyer = json.load(f)
+        
+        if price > buyer["money"]:
+            embed = Embed(title="Error", description="Not enough money in cash!",
+                          color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+            return
+        
+        # ok everything is right, we can actually buy the product now
+        # first update the moneys
+        if pain[item]["wallet"] != "":
+            seller["wallets"][pain[item]["wallet"]] += price
+        else:
+            seller["money"] += price
+
+        seller["total"] += price
+        buyer["money"] -= price
+        buyer["total"] -= price
+
+        with open(f"data/money/{pain[item]['author']}.json", "w") as f:
+            json.dump(seller, f)
+        with open(f"data/money/{ctx.author.id}.json", "w") as f:
+            json.dump(buyer, f)
+        
+        EconomyBasics.update_leaderboard(pain[item]["author"])
+        EconomyBasics.update_leaderboard(ctx.author.id)
+
+        # now add the item to the user's inventory
+        with open(f"data/items/{ctx.author.id}.json", "r+") as f:
+            bruh = json.load(f)
+            bruh.update({item: amount})
+            f.seek(0)
+            f.write(json.dumps(bruh))
+            f.truncate()
+        
+        # update the stock
+        # -1 means unlimited stock
+        if pain[item]["stock"] != -1:
+            with open(f"data/shop.json", "r+") as f:
+                bruh = json.load(f)
+                bruh[item]["stock"] -= amount
+                f.seek(0)
+                f.write(json.dumps(pain))
+                f.truncate()
+        
+        embed = Embed(description=f"Successfully bought {amount:,} {item}s", color=discord.Color(0x3eba49))
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+        await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):
     client.add_cog(Items(client))

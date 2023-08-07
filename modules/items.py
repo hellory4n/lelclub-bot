@@ -7,6 +7,7 @@ import os
 import json
 from .economy_basics import EconomyBasics
 import asyncio
+from typing import List
 
 class Items(commands.Cog):
     def __init__(self, client: commands.Bot):
@@ -466,6 +467,84 @@ class Items(commands.Cog):
         embed = Embed(description=f"Successfully bought {amount:,} {item}s", color=discord.Color(0x3eba49))
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=embed)
+
+
+
+    class InventoryView(View):
+        def __init__(self, embeds: List[Embed]):
+            super().__init__(timeout=None)
+            self.embeds = embeds
+            self.index = 0
+
+            for i, embed in enumerate(self.embeds):
+                embed.set_footer(text=f"Page {i + 1} of {len(self.embeds)}")
+
+            self._update_state()
+
+        def _update_state(self) -> None:
+            self.first_page.disabled = self.prev_page.disabled = self.index == 0
+            self.last_page.disabled = self.next_page.disabled = self.index == len(self.embeds) - 1
+        
+        @discord.ui.button(emoji="◀", style=ButtonStyle.blurple)
+        async def prev_page(self, button: Button, inter: discord.MessageInteraction):
+            self.index -= 1
+            self._update_state()
+
+            await inter.response.edit_message(embed=self.embeds[self.index], view=self)
+
+        @discord.ui.button(emoji="▶", style=ButtonStyle.blurple)
+        async def next_page(self, button: Button, inter: discord.MessageInteraction):
+            self.index += 1
+            self._update_state()
+
+            await inter.response.edit_message(embed=self.embeds[self.index], view=self)
+
+        @discord.ui.button(emoji="⏪", style=ButtonStyle.secondary)
+        async def first_page(self, button: Button, inter: discord.MessageInteraction):
+            self.index = 0
+            self._update_state()
+
+            await inter.response.edit_message(embed=self.embeds[self.index], view=self)
+
+        @discord.ui.button(emoji="⏩", style=ButtonStyle.secondary)
+        async def last_page(self, button: Button, inter: discord.MessageInteraction):
+            self.index = len(self.embeds) - 1
+            self._update_state()
+
+            await inter.response.edit_message(embed=self.embeds[self.index], view=self)
+
+    @commands.command(aliases=["inv"])
+    async def inventory(self, ctx: commands.Context):
+        EconomyBasics.setup_user(ctx.author.id)
+
+        inv = {}
+        with open(f"data/items/{ctx.author.id}.json", "r") as f:
+            inv = json.load(f)
+        
+        # split the leaderboard so pages work :)
+        chunks = []
+        new_dict = {}
+        for k, v in inv.items():
+            if len(new_dict) < 10:
+                new_dict[k] = v
+            else:
+                chunks.append(new_dict)
+                new_dict = {k: v}
+        chunks.append(new_dict)
+
+        # make cool embeds for the pages
+        embeds = []
+        bruh = 0
+        for chunk in chunks:
+            embed = Embed(color=0x008cff, description="")
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            for item, amount in chunk.items():
+                bruh += 1
+                embed.description += f"**{bruh}.** `{item}`: {amount:,}\n"
+            embeds.append(embed)
+
+        # Sends first embed with the buttons, it also passes the embeds list into the View class.
+        await ctx.send(embed=embeds[0], view=self.InventoryView(embeds))
 
 def setup(client: commands.Bot):
     client.add_cog(Items(client))

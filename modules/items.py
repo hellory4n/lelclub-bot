@@ -391,7 +391,7 @@ class Items(commands.Cog):
         # make sure there's enough stock
         if not pain[item]["stock"] == -1:
             if amount > pain[item]["stock"]:
-                embed = Embed(title="Error", description=f"The stock available for this item is only {pain[item]['stock']:,.2f}", 
+                embed = Embed(title="Error", description=f"The stock available for this item is only {pain[item]['stock']:,}", 
                               color=discord.Color(0xff4865))
                 await ctx.send(embed=embed)
                 return
@@ -445,7 +445,10 @@ class Items(commands.Cog):
         # now add the item to the user's inventory
         with open(f"data/items/{ctx.author.id}.json", "r+") as f:
             bruh = json.load(f)
-            bruh.update({item: amount})
+            if item not in bruh:
+                bruh.update({item: amount})
+            else:
+                bruh[item] += amount
             f.seek(0)
             f.write(json.dumps(bruh))
             f.truncate()
@@ -457,7 +460,7 @@ class Items(commands.Cog):
                 bruh = json.load(f)
                 bruh[item]["stock"] -= amount
                 f.seek(0)
-                f.write(json.dumps(pain))
+                f.write(json.dumps(bruh))
                 f.truncate()
         
         embed = Embed(description=f"Successfully bought {amount:,} {item}s", color=discord.Color(0x3eba49))

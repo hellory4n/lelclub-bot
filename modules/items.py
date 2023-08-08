@@ -332,25 +332,30 @@ class Items(commands.Cog):
                             color=discord.Color(0xff4865))
             await ctx.send(embed=embed)
         else:
-            # we need to ask the user to confirm cuz yes
-            embed = Embed(description=f"Are you sure you want to delete {item}? Keep in mind that some users might still own this item.\n\nSend \"y\" to confirm.",
-                          color=discord.Color(0xff4865))
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-            yes = await ctx.send(embed=embed)
+            if ctx.author.id == pain[item]["author"]:
+                # we need to ask the user to confirm cuz yes
+                embed = Embed(description=f"Are you sure you want to delete {item}? Keep in mind that some users might still own this item.\n\nSend \"y\" to confirm.",
+                            color=discord.Color(0xff4865))
+                embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+                yes = await ctx.send(embed=embed)
 
-            def check(message):
-                return message.author == ctx.author and str(message.content) == "y"
+                def check(message):
+                    return message.author == ctx.author and str(message.content) == "y"
 
-            try:
-                reply = await self.client.wait_for('message', timeout=10.0, check=check)
-            except asyncio.TimeoutError:
-                await yes.edit(content="Operation cancelled.", embed=None)
+                try:
+                    reply = await self.client.wait_for('message', timeout=10.0, check=check)
+                except asyncio.TimeoutError:
+                    await yes.edit(content="Operation cancelled.", embed=None)
+                else:
+                    del pain[item]
+                    with open(f"data/shop.json", "w") as f:
+                        json.dump(pain, f)
+
+                    await ctx.send(f"{item} is now gone.")
             else:
-                del pain[item]
-                with open(f"data/shop.json", "w") as f:
-                    json.dump(pain, f)
-
-                await ctx.send(f"{item} is now gone.")
+                embed = Embed(title="Error", description=f"<@{pain[item]['author']}> created this item, and this person is not you!", 
+                              color=discord.Color(0xff4865))
+                await ctx.send(embed=embed)
     
 
 
@@ -543,11 +548,12 @@ class Items(commands.Cog):
         chunks = []
         new_dict = {}
         for k, v in inv.items():
-            if len(new_dict) < 10:
-                new_dict[k] = v
-            else:
-                chunks.append(new_dict)
-                new_dict = {k: v}
+            if v > 0:
+                if len(new_dict) < 10:
+                    new_dict[k] = v
+                else:
+                    chunks.append(new_dict)
+                    new_dict = {k: v}
         chunks.append(new_dict)
 
         # make cool embeds for the pages
@@ -563,6 +569,50 @@ class Items(commands.Cog):
 
         # Sends first embed with the buttons, it also passes the embeds list into the View class.
         await ctx.send(embed=embeds[0], view=self.InventoryView(embeds))
+    
+
+
+    @commands.command(aliases=["give-item"])
+    async def give_item(self, ctx: commands.Context, item: str, user: discord.User, amount: int = 1):
+        EconomyBasics.setup_user(ctx.author.id)
+        EconomyBasics.setup_user(user.id)
+
+        # does the author own that?
+        pain = {}
+        with open(f"data/items/{ctx.author.id}.json", "r") as f:
+            pain = json.load(f)
+        
+        if not item in pain:
+            embed = Embed(title="Error", description=f"Item `{item}` not found in your inventory.\n (If the name has spaces then put it in quotes, example: `l.give-item \"cool item\" @cooluser`)", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+            return
+
+        # make sure there's enough stock
+        if amount > pain[item]:
+            embed = Embed(title="Error", description=f"You only own {pain[item]['stock']:,} {item}s!", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+            return
+
+        # ok everything is right, we can actually give the item now
+        with open(f"data/items/{ctx.author.id}.json", "w") as f:
+            pain[item] -= amount
+            json.dump(pain, f)
+
+        with open(f"data/items/{user.id}.json", "r+") as f:
+            bruh = json.load(f)
+            if item not in bruh:
+                bruh.update({item: amount})
+            else:
+                bruh[item] += amount
+            f.seek(0)
+            f.write(json.dumps(bruh))
+            f.truncate()
+        
+        embed = Embed(description=f"Successfully gave {amount:,} {item}s to {user.mention}", color=discord.Color(0x3eba49))
+        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+        await ctx.send(embed=embed)
 
 def setup(client: commands.Bot):
     client.add_cog(Items(client))

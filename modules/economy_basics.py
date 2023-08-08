@@ -130,7 +130,7 @@ class EconomyBasics(commands.Cog):
     
 
 
-    @commands.command(aliases=["give-money", "give_money"])
+    @commands.command(aliases=["give-money", "give_money", "give"])
     async def pay(self, ctx, user: discord.User, amount: float):
         self.setup_user(ctx.author.id)
         self.setup_user(user.id)

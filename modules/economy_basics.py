@@ -44,12 +44,12 @@ class EconomyBasics(commands.Cog):
         """Updates the leaderboard file"""
 
         bruh = 0.00
-        with open(f"data/money/{user_id}.json", "r") as user_file:
+        with open(f"data/money/{str(user_id)}.json", "r") as user_file:
             bruh = json.load(user_file)["total"]
         
         with open("data/leaderboard.json", "r+") as lb_file:
             pain = json.load(lb_file)
-            pain[user_id] = bruh
+            pain[str(user_id)] = bruh
             lb_file.seek(0)
             lb_file.write(json.dumps(pain))
             lb_file.truncate()

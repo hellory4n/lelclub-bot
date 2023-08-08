@@ -140,7 +140,8 @@ class Items(commands.Cog):
                         "price": price,
                         "description": description,
                         "stock": stock,
-                        "wallet": wallet
+                        "wallet": wallet,
+                        "purchases": 0
                     }
                 })
                 f.seek(0)
@@ -454,15 +455,16 @@ class Items(commands.Cog):
             f.write(json.dumps(bruh))
             f.truncate()
         
-        # update the stock
+        # update the stock and number of purchases (required for calculating inflation)
         # -1 means unlimited stock
-        if pain[item]["stock"] != -1:
-            with open(f"data/shop.json", "r+") as f:
-                bruh = json.load(f)
+        with open(f"data/shop.json", "r+") as f:
+            bruh = json.load(f)
+            if pain[item]["stock"] != -1:
                 bruh[item]["stock"] -= amount
-                f.seek(0)
-                f.write(json.dumps(bruh))
-                f.truncate()
+            bruh[item]["purchases"] += amount
+            f.seek(0)
+            f.write(json.dumps(bruh))
+            f.truncate()
         
         embed = Embed(description=f"Successfully bought {amount:,} {item}s", color=discord.Color(0x3eba49))
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)

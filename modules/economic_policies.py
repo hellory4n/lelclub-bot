@@ -5,6 +5,7 @@ import os
 import json
 from datetime import datetime, timezone
 from .economy_basics import EconomyBasics
+import itertools
 
 class EconomicPolicies(commands.Cog):
     def __init__(self, client: commands.Bot):
@@ -12,7 +13,7 @@ class EconomicPolicies(commands.Cog):
 
     @tasks.loop(minutes=60.0)
     async def economy_stats(self):
-        if datetime.now(timezone.utc).hour == 13:
+        if datetime.now(timezone.utc).hour == 14:
             # calculate gdp
             gdp = 0.0
             bruh = {}
@@ -28,16 +29,40 @@ class EconomicPolicies(commands.Cog):
                 economy_thingies = json.load(f)
             gdp_change = (gdp - (economy_thingies["previous_gdp"]+1)) / (economy_thingies["previous_gdp"]+1) * 100
             economy_thingies["previous_gdp"] = gdp
+            
+            # get the 10 most popular items to calculate inflation
+            items = {}
+            with open("data/shop.json", "r") as f:
+                items = json.load(f)
+            top_10_items = dict(sorted(items.items(), key=lambda x:x[1]["purchases"], reverse=True))
+            if len(top_10_items) > 10:
+                top_10_items = dict(itertools.islice(top_10_items.items(), 10))
+            else:
+                top_10_items = dict(itertools.islice(top_10_items.items(), len(top_10_items)))
 
+            # actually calculate inflation, also top 10 items
+            price_sum = 0.0
+            top_10_items_of_all_times = ""
+            m = 0
+            for item, info in top_10_items.items():
+                m += 1
+                price_sum += info["price"]
+                top_10_items_of_all_times += f"{m}. {item}: {info['purchases']} purchases\n"
+            
+            average_price_index = (price_sum / (economy_thingies["previous_price_sum"]+1)) / 100
+            inflation = ((average_price_index - economy_thingies["previous_average_price_index"])
+                         / (economy_thingies["previous_average_price_index"]+1)) * 100
+
+            economy_thingies["previous_price_sum"] = price_sum
+            economy_thingies["previous_average_price_index"] = average_price_index
             with open("data/economic_policies.json", "w") as f:
                 json.dump(economy_thingies, f)
-            
+
             # send the stats
             embed = Embed(title="Daily update on the economy")
-            if gdp_change > 0:
-                embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} - {gdp_change:,.3f}% increase :money_mouth:")
-            else:
-                embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} - {abs(gdp_change)}% decrease **:(**")
+            embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} • {gdp_change:,.3f}% change :money_mouth:")
+            embed.add_field(name="Inflation", value=f"{inflation:,.2f}% :money_mouth:")
+            embed.add_field(name="10 most popular items", value=top_10_items_of_all_times)
             channel = self.client.get_channel(1030483261249556490)
             await channel.send(embed=embed)
 

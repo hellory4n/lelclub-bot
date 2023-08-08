@@ -123,7 +123,7 @@ class Items(commands.Cog):
             if stock == -1:
                 stock_but_the_user_sees_it = "unlimited"
             else:
-                stock_but_the_user_sees_it = f"{stock:,.2f}"
+                stock_but_the_user_sees_it = f"{stock:,}"
             
             wallet_but_the_user_sees_it = ""
             if wallet == "":
@@ -516,11 +516,14 @@ class Items(commands.Cog):
             await inter.response.edit_message(embed=self.embeds[self.index], view=self)
 
     @commands.command(aliases=["inv"])
-    async def inventory(self, ctx: commands.Context):
-        EconomyBasics.setup_user(ctx.author.id)
+    async def inventory(self, ctx: commands.Context, user: discord.User = None):
+        if user == None:
+            user = ctx.author
+
+        EconomyBasics.setup_user(user.id)
 
         inv = {}
-        with open(f"data/items/{ctx.author.id}.json", "r") as f:
+        with open(f"data/items/{user.id}.json", "r") as f:
             inv = json.load(f)
         
         # split the leaderboard so pages work :)
@@ -539,7 +542,7 @@ class Items(commands.Cog):
         bruh = 0
         for chunk in chunks:
             embed = Embed(color=0x008cff, description="")
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            embed.set_author(name=user.display_name, icon_url=user.display_avatar.url)
             for item, amount in chunk.items():
                 bruh += 1
                 embed.description += f"**{bruh}.** `{item}`: {amount:,}\n"

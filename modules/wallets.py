@@ -15,8 +15,9 @@ class Wallets(commands.Cog):
         print("wallet cog loaded")
 
     @commands.command(aliases=["create-wallet", "add-wallet", "add_wallet", "new_wallet", "new-wallet"])
-    async def create_wallet(self, ctx, *, name):
+    async def create_wallet(self, ctx, *, name: str):
         EconomyBasics.setup_user(ctx.author.id)
+        name = name.replace("\"", "")
 
         with open(f"data/money/{ctx.author.id}.json", "r+") as f:
             pain = json.load(f)
@@ -136,7 +137,7 @@ class Wallets(commands.Cog):
             await ctx.send(embed=embed)
         else:
             # we need to ask the user to confirm cuz yes
-            embed = Embed(description=f"Are you sure you want to delete {wallet}? **BS {pain['wallets'][wallet]:,.2f}** will be permanently lost!\n\nSend \"y\" to confirm.",
+            embed = Embed(description=f"Are you sure you want to delete {wallet}? **B$ {pain['wallets'][wallet]:,.2f}** will be permanently lost!\n\nSend \"y\" to confirm.",
                           color=discord.Color(0xff4865))
             embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
             yes = await ctx.send(embed=embed)

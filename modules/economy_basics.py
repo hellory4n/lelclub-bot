@@ -25,19 +25,21 @@ class EconomyBasics(commands.Cog):
             init = {"money": 0.00, "total": 0.00, "wallets": {}}
             with open(f"data/money/{user}.json", "w+") as json_file:
                 json.dump(init, json_file)
+                
+            # for the leaderboard :)
+            with open("data/leaderboard.json", "r+") as lb_file:
+                pain = json.load(lb_file)
+                pain.update({str(user_id): 0.00})
+                lb_file.seek(0)
+                lb_file.write(json.dumps(pain))
+                lb_file.truncate()
         
         if not os.path.exists(f"data/items/{user}.json"):
             init = {}
             with open(f"data/items/{user}.json", "w+") as json_file:
                 json.dump(init, json_file)
         
-        # for the leaderboard :)
-        with open("data/leaderboard.json", "r+") as lb_file:
-            pain = json.load(lb_file)
-            pain.update({user_id: 0.00})
-            lb_file.seek(0)
-            lb_file.write(json.dumps(pain))
-            lb_file.truncate()
+        
     
     @staticmethod
     def update_leaderboard(user_id: int):

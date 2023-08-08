@@ -13,7 +13,7 @@ class EconomicPolicies(commands.Cog):
 
     @tasks.loop(minutes=60.0)
     async def economy_stats(self):
-        if datetime.now(timezone.utc).hour == 16:
+        if datetime.now(timezone.utc).hour == 15:
             # calculate gdp
             gdp = 0.0
             bruh = {}
@@ -129,7 +129,7 @@ class EconomicPolicies(commands.Cog):
                 new_percentage = float(percentage)
 
                 # indeed
-                if new_percentage > 10 or new_percentage < 0 or new_threshold < 0:
+                if new_percentage > 100 or new_percentage < 0 or new_threshold < 0:
                     embed = Embed(title="Error", description="The values provided seem very wrong.",
                                 color=discord.Color(0xff4865))
                     await ctx.send(embed=embed)
@@ -144,6 +144,82 @@ class EconomicPolicies(commands.Cog):
                         f.truncate()
                     
                     embed = Embed(title="Success", description="Taxes have been successfully changed.",
+                            color=discord.Color(0x3eba49))
+                    await ctx.send(embed=embed)
+            except:
+                embed = Embed(title="Error", description="Are you sure the arguments are numbers?",
+                            color=discord.Color(0xff4865))
+                await ctx.send(embed=embed)
+    
+
+
+    @commands.command(aliases=["print-money", "add-money", "add_money"])
+    async def print_money(self, ctx: commands.Context, moneys, user: discord.User):
+        # only the ceo of economy can use this
+        role = discord.utils.get(ctx.message.guild.roles, name='CEO of economy')
+        if role not in ctx.author.roles:
+            embed = Embed(title="Error", description="You're not the CEO of economy!", color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+        else:
+            try:
+                new_moneys = float(moneys)
+
+                # indeed
+                if new_moneys < 0:
+                    embed = Embed(title="Error", description="The values provided seem very wrong.",
+                                color=discord.Color(0xff4865))
+                    await ctx.send(embed=embed)
+                else:
+                    # add the amount :)
+                    EconomyBasics.setup_user(user.id)
+                    with open(f"data/money/{user.id}.json", "r+") as f:
+                        pain = json.load(f)
+                        pain["money"] += new_moneys
+                        pain["total"] += new_moneys
+                        f.seek(0)
+                        f.write(json.dumps(pain))
+                        f.truncate()
+                    EconomyBasics.update_leaderboard(user.id)
+                    
+                    embed = Embed(title="Success", description=f"{user.mention} now has more money.",
+                            color=discord.Color(0x3eba49))
+                    await ctx.send(embed=embed)
+            except:
+                embed = Embed(title="Error", description="Are you sure the arguments are numbers?",
+                            color=discord.Color(0xff4865))
+                await ctx.send(embed=embed)
+    
+
+
+    @commands.command(aliases=["remove-money", "delete-money", "delete_money"])
+    async def remove_money(self, ctx: commands.Context, moneys, user: discord.User):
+        # only the ceo of economy can use this
+        role = discord.utils.get(ctx.message.guild.roles, name='CEO of economy')
+        if role not in ctx.author.roles:
+            embed = Embed(title="Error", description="You're not the CEO of economy!", color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+        else:
+            try:
+                new_moneys = float(moneys)
+
+                # indeed
+                if new_moneys < 0:
+                    embed = Embed(title="Error", description="The values provided seem very wrong.",
+                                color=discord.Color(0xff4865))
+                    await ctx.send(embed=embed)
+                else:
+                    # add the amount :)
+                    EconomyBasics.setup_user(user.id)
+                    with open(f"data/money/{user.id}.json", "r+") as f:
+                        pain = json.load(f)
+                        pain["money"] -= new_moneys
+                        pain["total"] -= new_moneys
+                        f.seek(0)
+                        f.write(json.dumps(pain))
+                        f.truncate()
+                    EconomyBasics.update_leaderboard(user.id)
+                    
+                    embed = Embed(title="Success", description=f"{user.mention} now has less money.",
                             color=discord.Color(0x3eba49))
                     await ctx.send(embed=embed)
             except:

@@ -1,16 +1,52 @@
 import disnake as discord
 from disnake import Embed
-from disnake.ext import commands
+from disnake.ext import commands, tasks
 import os
 import json
+from datetime import datetime, timezone
+from .economy_basics import EconomyBasics
 
 class EconomicPolicies(commands.Cog):
     def __init__(self, client: commands.Bot):
         self.client = client
 
+    @tasks.loop(minutes=60.0)
+    async def economy_stats(self):
+        if datetime.now(timezone.utc).hour == 13:
+            # calculate gdp
+            gdp = 0.0
+            bruh = {}
+            with open("data/leaderboard.json", "r") as f:
+                bruh = json.load(f)
+            
+            for user, moneys in bruh.items():
+                gdp += moneys
+            
+            # calculate increase/decrease in gdp
+            economy_thingies = {}
+            with open("data/economic_policies.json", "r") as f:
+                economy_thingies = json.load(f)
+            gdp_change = (gdp - (economy_thingies["previous_gdp"]+1)) / (economy_thingies["previous_gdp"]+1) * 100
+            economy_thingies["previous_gdp"] = gdp
+
+            with open("data/economic_policies.json", "w") as f:
+                json.dump(economy_thingies, f)
+            
+            # send the stats
+            embed = Embed(title="Daily update on the economy")
+            if gdp_change > 0:
+                embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} - {gdp_change:,.3f}% increase :money_mouth:")
+            else:
+                embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} - {abs(gdp_change)}% decrease **:(**")
+            channel = self.client.get_channel(1030483261249556490)
+            await channel.send(embed=embed)
+
+
+
     @commands.Cog.listener()
     async def on_ready(self):
-        print("economic policies cog loaded")
+        self.economy_stats.start()
+        print("economic policies cog loaded")    
 
     @commands.command(aliases=["work-payout"])
     async def work_payout(self, ctx, min, max):

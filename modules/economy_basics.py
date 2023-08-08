@@ -128,15 +128,6 @@ class EconomyBasics(commands.Cog):
         embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
         await ctx.send(embed=embed)
     
-    # cool cooldown message :)
-    @work.error
-    async def command_name_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = discord.Embed(description=f"You cannot work for {error.retry_after:.2f}s.",
-                                  color=discord.Color(0xff4865))
-            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
-            await ctx.send(embed=embed)
-    
 
 
     @commands.command(aliases=["give-money", "give_money"])

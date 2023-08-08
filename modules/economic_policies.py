@@ -64,7 +64,7 @@ class EconomicPolicies(commands.Cog):
                 json.dump(economy_thingies, f)
 
             # send the stats
-            embed = Embed(title="Daily update on the economy")
+            embed = Embed(title="Daily update on the economy", color=discord.Color(0x008cff))
             embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} • {gdp_change:,.3f}% change :money_mouth:", inline=False)
             embed.add_field(name="Inflation", value=f"{inflation:,.2f}% :money_mouth:", inline=False)
             embed.add_field(name="Exchange rate", value=f"B$ {exchange_rate:,.2f} = US$ 1", inline=False)

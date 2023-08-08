@@ -8,6 +8,7 @@ import json
 from .economy_basics import EconomyBasics
 import asyncio
 from typing import List
+import re
 
 class Items(commands.Cog):
     def __init__(self, client: commands.Bot):
@@ -30,7 +31,7 @@ class Items(commands.Cog):
                 components=[
                     TextInput(
                         label="Name",
-                        placeholder="Cool Item™",
+                        placeholder="Only use alphanumeric characters and spaces",
                         custom_id="name",
                         style=TextInputStyle.short,
                         min_length=1,
@@ -87,6 +88,18 @@ class Items(commands.Cog):
             description = modal_inter.text_values["description"]
             stock_ = modal_inter.text_values["stock"]
             wallet = modal_inter.text_values["wallet"]
+
+            # make sure the item doesn't already exist
+            name = re.sub("[^a-zA-Z0-9 ]", "", name) # only alphanumeric characters and spaces allowed
+            with open(f"data/shop.json", "r") as f:
+                pain = json.load(f)
+            
+            if name in pain:
+                embed = Embed(title="Error",
+                              description=f"Item `{name}` already exists.",
+                              color=discord.Color(0xff4865))
+                await modal_inter.response.send_message(embed=embed)
+                return
 
             # make sure things the price and stock are valid
             price = 0

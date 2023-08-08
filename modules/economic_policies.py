@@ -13,7 +13,7 @@ class EconomicPolicies(commands.Cog):
 
     @tasks.loop(minutes=60.0)
     async def economy_stats(self):
-        if datetime.now(timezone.utc).hour == 14:
+        if datetime.now(timezone.utc).hour == 16:
             # calculate gdp
             gdp = 0.0
             bruh = {}
@@ -47,7 +47,7 @@ class EconomicPolicies(commands.Cog):
             for item, info in top_10_items.items():
                 m += 1
                 price_sum += info["price"]
-                top_10_items_of_all_times += f"{m}. {item}: {info['purchases']} purchases\n"
+                top_10_items_of_all_times += f"{m}. {item}: {info['purchases']:,} purchases\n"
             
             average_price_index = (price_sum / (economy_thingies["previous_price_sum"]+1)) / 100
             inflation = ((average_price_index - economy_thingies["previous_average_price_index"])
@@ -55,14 +55,20 @@ class EconomicPolicies(commands.Cog):
 
             economy_thingies["previous_price_sum"] = price_sum
             economy_thingies["previous_average_price_index"] = average_price_index
+
+            # calculate exchange rate
+            exchange_rate = economy_thingies["previous_exchange_rate"] * ((inflation/100)+1)
+            economy_thingies["previous_exchange_rate"] = exchange_rate
+
             with open("data/economic_policies.json", "w") as f:
                 json.dump(economy_thingies, f)
 
             # send the stats
             embed = Embed(title="Daily update on the economy")
-            embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} • {gdp_change:,.3f}% change :money_mouth:")
-            embed.add_field(name="Inflation", value=f"{inflation:,.2f}% :money_mouth:")
-            embed.add_field(name="10 most popular items", value=top_10_items_of_all_times)
+            embed.add_field(name="GDP", value=f"B$ {gdp:,.2f} • {gdp_change:,.3f}% change :money_mouth:", inline=False)
+            embed.add_field(name="Inflation", value=f"{inflation:,.2f}% :money_mouth:", inline=False)
+            embed.add_field(name="Exchange rate", value=f"B$ {exchange_rate:,.2f} = US$ 1", inline=False)
+            embed.add_field(name="10 most popular items", value=top_10_items_of_all_times, inline=False)
             channel = self.client.get_channel(1030483261249556490)
             await channel.send(embed=embed)
 

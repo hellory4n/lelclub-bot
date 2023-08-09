@@ -1,6 +1,6 @@
 import disnake as discord
 from disnake import Embed, Button, ButtonStyle
-from discord.ui import View
+from disnake.ui import View
 from disnake.ext import commands
 import json
 from .economy_basics import EconomyBasics

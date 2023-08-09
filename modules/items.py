@@ -19,7 +19,7 @@ class Items(commands.Cog):
         print("item cog loaded")
     
     class NewItem(View):
-        def __init__(self, *, timeout: float | None = 180, client: commands.Bot) -> None:
+        def __init__(self, *, timeout: float = 180, client: commands.Bot) -> None:
             super().__init__(timeout=timeout)
             self.client = client
 
@@ -179,7 +179,7 @@ class Items(commands.Cog):
 
 
     class EditItem(View):
-        def __init__(self, *, timeout: float | None = 180, client: commands.Bot, name: str) -> None:
+        def __init__(self, *, timeout: float, client: commands.Bot, name: str) -> None:
             super().__init__(timeout=timeout)
             self.client = client
             self.name = name

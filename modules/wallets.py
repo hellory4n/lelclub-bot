@@ -19,12 +19,20 @@ class Wallets(commands.Cog):
         EconomyBasics.setup_user(ctx.author.id)
         name = name.replace("\"", "")
 
-        with open(f"data/money/{ctx.author.id}.json", "r+") as f:
+        pain = {}
+        with open(f"data/money/{ctx.author.id}.json", "r") as f:
             pain = json.load(f)
+        
+        if name in pain["wallets"]:
+            embed = Embed(description=f"Wallet `{name}` already exists!",
+                      color=discord.Color(0xff4865))
+            embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)
+            await ctx.send(embed=embed)
+            return
+
+        with open(f"data/money/{ctx.author.id}.json", "w") as f:
             pain["wallets"].update({name: 0.00})
-            f.seek(0)
-            f.write(json.dumps(pain))
-            f.truncate()
+            json.dump(pain, f)
 
         embed = Embed(description=f"Successfully created wallet `{name}`",
                       color=discord.Color(0x3eba49))
@@ -34,7 +42,7 @@ class Wallets(commands.Cog):
 
 
     @commands.command(aliases=["dep"])
-    async def deposit(self, ctx, amount, wallet):
+    async def deposit(self, ctx, amount, *, wallet):
         EconomyBasics.setup_user(ctx.author.id)
 
         pain = {}
@@ -55,7 +63,7 @@ class Wallets(commands.Cog):
                 else:
                     deposit = float(amount)
 
-                if pain["money"] >= deposit:
+                if pain["money"] > deposit-1:
                     pain["money"] -= deposit
                     pain["wallets"][wallet] += deposit
 
@@ -67,7 +75,7 @@ class Wallets(commands.Cog):
                     embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)                        
                     await ctx.send(embed=embed)
                 else:
-                    embed = Embed(title="Error", description=f"You only have {pain['money']:,.2f} in cash!", 
+                    embed = Embed(title="Error", description=f"You only have B$ {pain['money']:,.2f} in cash!", 
                                     color=discord.Color(0xff4865))
                     await ctx.send(embed=embed)
             except:
@@ -78,7 +86,7 @@ class Wallets(commands.Cog):
 
 
     @commands.command(aliases=["with"])
-    async def withdraw(self, ctx, amount, wallet):
+    async def withdraw(self, ctx, amount, *, wallet):
         EconomyBasics.setup_user(ctx.author.id)
 
         pain = {}
@@ -87,19 +95,19 @@ class Wallets(commands.Cog):
         
         # find wallet
         if not wallet in pain["wallets"]:
-            embed = Embed(title="Error", description=f"Wallet `{wallet}` not found. (If the name has spaces then put it in quotes, example: `l.deposit 69 \"cool wallet\"`)", 
+            embed = Embed(title="Error", description=f"Wallet `{wallet}` not found. (If the name has spaces then put it in quotes, example: `l.withdraw 69 \"cool wallet\"`)", 
                             color=discord.Color(0xff4865))
             await ctx.send(embed=embed)
         else:
             try:
-                # so you can use l.dep all "cool wallet"
+                # so you can use l.with all "cool wallet"
                 withdraw = 0
                 if amount == "all":
                     withdraw = pain["wallets"][wallet]
                 else:
                     withdraw = float(amount)
 
-                if pain["wallets"][wallet] >= withdraw:
+                if pain["wallets"][wallet] > withdraw-1:
                     pain["money"] += withdraw
                     pain["wallets"][wallet] -= withdraw
 
@@ -111,7 +119,7 @@ class Wallets(commands.Cog):
                     embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.display_avatar.url)                        
                     await ctx.send(embed=embed)
                 else:
-                    embed = Embed(title="Error", description=f"You only have {pain['wallet'][wallet]:,.2f} in {pain[wallet]}!", 
+                    embed = Embed(title="Error", description=f"You only have B$ {pain['wallets'][wallet]:,.2f} in {wallet}!", 
                                     color=discord.Color(0xff4865))
                     await ctx.send(embed=embed)
             except:

@@ -140,7 +140,7 @@ class EconomyBasics(commands.Cog):
         with open(f"data/money/{ctx.author.id}.json", "r") as f:
             author_moneys = json.load(f)["money"]
         
-        if author_moneys >= amount:
+        if author_moneys > amount-1:
             # yes.
             with open(f"data/money/{ctx.author.id}.json", "r+") as f:
                 pain = json.load(f)

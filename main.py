@@ -20,7 +20,7 @@ async def on_ready():
 
 # top tier error handling
 @client.event
-    async def on_command_error(ctx, error):
+async def on_command_error(ctx, error):
     embed = discord.Embed(title="Error", description=f"`{error}`\n\nFeel free to ping <@748560377763201185> when seeing errors like this, we need to help the bot be more stable for the good of lelclub <:lelflag:1136802749347020870> <:lelflag:1136802749347020870>", color=discord.Color(0xff4865))
     await ctx.send(embed=embed)
 

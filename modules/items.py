@@ -106,6 +106,8 @@ class Items(commands.Cog):
             stock = 0
             try:
                 price = float(price_)
+                if price < 0:
+                    raise "bruh"
                 if (stock_ == ""):
                     stock = -1
                 else:
@@ -251,6 +253,8 @@ class Items(commands.Cog):
                     price = -1
                 else:
                     price = float(price_)
+                    if price < 0:
+                        raise "bruh"
 
                 if stock_ == "":
                     stock = -1

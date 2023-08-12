@@ -181,7 +181,7 @@ class Items(commands.Cog):
 
 
     class EditItem(View):
-        def __init__(self, *, timeout: float, client: commands.Bot, name: str) -> None:
+        def __init__(self, *, timeout: float = 180, client: commands.Bot, name: str) -> None:
             super().__init__(timeout=timeout)
             self.client = client
             self.name = name
@@ -281,10 +281,20 @@ class Items(commands.Cog):
                     return
             else:
                 wallet = ""
+            
+            pain = {}
+            with open(f"data/shop.json", "r") as f:
+                pain = json.load(f)
+
+            if pain[self.name]["author"] != modal_inter.author.id:
+                embed = Embed(title="Error",
+                            description=f"You're not the author lol",
+                            color=discord.Color(0xff4865))
+                await modal_inter.response.send_message(embed=embed)
+                return
 
             # now we actually edit the item :)
-            with open(f"data/shop.json", "r+") as f:
-                pain = json.load(f)
+            with open(f"data/shop.json", "w") as f:
                 if description != "":
                     pain[self.name]["description"] = description
                 if price != -1:
@@ -293,9 +303,7 @@ class Items(commands.Cog):
                     pain[self.name]["stock"] = stock
                 if wallet != "":
                     pain[self.name]["wallet"] = wallet
-                f.seek(0)
-                f.write(json.dumps(pain))
-                f.truncate()
+                json.dump(pain, f)
 
             embed = Embed(description=f"Successfully edited item `{self.name}`", color=discord.Color(0x3eba49))
             embed.set_author(name=modal_inter.author.display_name, icon_url=modal_inter.author.display_avatar.url)
@@ -400,6 +408,12 @@ class Items(commands.Cog):
     @commands.command(aliases=["purchase", "get"])
     async def buy(self, ctx: commands.Context, item: str, amount: int = 1):
         EconomyBasics.setup_user(ctx.author.id)
+
+        if amount < 0:
+            embed = Embed(title="Error", description=f"That's very wrong.", 
+                            color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+            return
 
         # does the item exist?
         pain = {}

@@ -62,6 +62,8 @@ class Wallets(commands.Cog):
                     deposit = pain["money"]
                 else:
                     deposit = float(amount)
+                    if deposit < 0:
+                        raise "bruh"
 
                 if pain["money"] > deposit-1:
                     pain["money"] -= deposit
@@ -106,6 +108,8 @@ class Wallets(commands.Cog):
                     withdraw = pain["wallets"][wallet]
                 else:
                     withdraw = float(amount)
+                    if withdraw < 0:
+                        raise "bruh"
 
                 if pain["wallets"][wallet] > withdraw-1:
                     pain["money"] += withdraw

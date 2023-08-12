@@ -140,6 +140,12 @@ class EconomyBasics(commands.Cog):
         with open(f"data/money/{ctx.author.id}.json", "r") as f:
             author_moneys = json.load(f)["money"]
         
+        if amount < 0:
+            embed = Embed(title="Error", description=f"That's very wrong.", 
+                          color=discord.Color(0xff4865))
+            await ctx.send(embed=embed)
+            return
+
         if author_moneys > amount-1:
             # yes.
             with open(f"data/money/{ctx.author.id}.json", "r+") as f:

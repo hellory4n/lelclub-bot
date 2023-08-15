@@ -57,7 +57,7 @@ class EconomicPolicies(commands.Cog):
             economy_thingies["previous_average_price_index"] = average_price_index
 
             # calculate exchange rate
-            exchange_rate = economy_thingies["previous_exchange_rate"] * ((inflation/100)+1)
+            exchange_rate = economy_thingies["previous_exchange_rate"] * ((inflation/100))
             economy_thingies["previous_exchange_rate"] = exchange_rate
 
             with open("data/economic_policies.json", "w") as f:

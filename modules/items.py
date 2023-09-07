@@ -401,11 +401,12 @@ class Items(commands.Cog):
             embed.add_field(name="Description", value=pain[item]['description'], inline=True)
             embed.add_field(name="Stock", value=stock_but_the_user_sees_it, inline=True)
             embed.add_field(name="Wallet", value=wallet_but_the_user_sees_it, inline=True)
+            embed.add_field(name="Purchases", value=pain[item]["purchases"], inline=True)
             await ctx.send(embed=embed)
     
 
 
-    @commands.command(aliases=["purchase", "get"])
+    @commands.command(aliases=["purchase", "get", "buy-item"])
     async def buy(self, ctx: commands.Context, item: str, amount: int = 1):
         EconomyBasics.setup_user(ctx.author.id)
 

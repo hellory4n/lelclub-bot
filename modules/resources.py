@@ -12,7 +12,7 @@ class Resources(commands.Cog):
 
     @tasks.loop(minutes=60.0)
     async def resource_thing(self):
-        if datetime.now(timezone.utc).hour == 15:
+        if datetime.now(timezone.utc).hour == 2:
             land = [
                 "Fard City Coal",
                 "Lelwoon Iron and Obamium",
@@ -40,223 +40,248 @@ class Resources(commands.Cog):
                 "Ben State Potatos"
             ]
 
-            bruh = {}
+            bruh: dict = {}
             with open("data/leaderboard.json", "r") as f:
                 bruh = json.load(f)
             
-            for cool_citizen, money in bruh:
-                epic_items = {}
-                with open(f"data/items/{cool_citizen}", 'r') as f:
-                    epic_items = epic_items
-                
-                save_file = False
-                for cool_land in land:
-                    if cool_land in epic_items:
-                        save_file = True
-                        if cool_land == "Fard City Coal":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 1
-                            else:
-                                epic_items.update({"Coal": 1})
-                        
-                        if cool_land == "Lelwoon Iron and Obamium":
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 2
-                            else:
-                                epic_items.update({"Iron": 2})
-                            if "Obamium" in epic_items:
-                                epic_items["Obamium"] += 3
-                            else:
-                                epic_items.update({"Obamium": 3})
-                        
-                        if cool_land == "Helpimacubia Iron and Obamium":
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 2
-                            else:
-                                epic_items.update({"Iron": 2})
-                            if "Obamium" in epic_items:
-                                epic_items["Obamium"] += 1
-                            else:
-                                epic_items.update({"Obamium": 1})
-                        
-                        if cool_land == "Switzerland 2.0 Obamium":
-                            if "Obamium" in epic_items:
-                                epic_items["Obamium"] += 1
-                            else:
-                                epic_items.update({"Obamium": 1})
-                        
-                        if cool_land == "New Soodland Iron and Obamium":
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 1
-                            else:
-                                epic_items.update({"Iron": 1})
-                            if "Obamium" in epic_items:
-                                epic_items["Obamium"] += 1
-                            else:
-                                epic_items.update({"Obamium": 1})
-                        
-                        if cool_land == "New Bob Issues Rare Materials":
-                            if "Diamonds" in epic_items:
-                                epic_items["Diamonds"] += 1
-                            else:
-                                epic_items.update({"Diamonds": 1})
-                            if "Gold" in epic_items:
-                                epic_items["Gold"] += 1
-                            else:
-                                epic_items.update({"Gold": 1})
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 1
-                            else:
-                                epic_items.update({"Iron": 1})
-                        
-                        if cool_land == "Southern BOLG Rare Materials":
-                            if "Diamonds" in epic_items:
-                                epic_items["Diamonds"] += 1
-                            else:
-                                epic_items.update({"Diamonds": 1})
-                            if "Gold" in epic_items:
-                                epic_items["Gold"] += 1
-                            else:
-                                epic_items.update({"Gold": 1})
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 1
-                            else:
-                                epic_items.update({"Iron": 1})
-                        
-                        if cool_land == "Capital Coal and Obamium":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 1
-                            else:
-                                epic_items.update({"Coal": 1})
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 1
-                            else:
-                                epic_items.update({"Iron": 1})
-                        
-                        if cool_land == "Thaizsanches Coal":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 1
-                            else:
-                                epic_items.update({"Coal": 1})
-                        
-                        if cool_land == "BOLG Uranium and Iron":
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 3
-                            else:
-                                epic_items.update({"Iron": 3})
-                            if "Uranium" in epic_items:
-                                epic_items["Uranium"] += 3
-                            else:
-                                epic_items.update({"Uranium": 3})
-                        
-                        if cool_land == "r/lelcity Oil and Natural Gas":
-                            if "Oil" in epic_items:
-                                epic_items["Oil"] += 3
-                            else:
-                                epic_items.update({"Oil": 3})
-                            if "Natural Gas" in epic_items:
-                                epic_items["Natural Gas"] += 2
-                            else:
-                                epic_items.update({"Natural Gas": 2})
-                        
-                        if cool_land == "Breat Gritain Coal":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 1
-                            else:
-                                epic_items.update({"Coal": 1})
-                        
-                        if cool_land == "Breat Gritain Wood":
-                            if "Wood" in epic_items:
-                                epic_items["Wood"] += 1
-                            else:
-                                epic_items.update({"Wood": 1})
-                        
-                        if cool_land == "Claps Wood":
-                            if "Wood" in epic_items:
-                                epic_items["Wood"] += 3
-                            else:
-                                epic_items.update({"Wood": 3})
-                        
-                        if cool_land == "New Lelcity Coal":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 1
-                            else:
-                                epic_items.update({"Coal": 1})
-                        
-                        if cool_land == "Berkelium Iron and Obamium":
-                            if "Iron" in epic_items:
-                                epic_items["Iron"] += 2
-                            else:
-                                epic_items.update({"Iron": 2})
-                            if "Obamium" in epic_items:
-                                epic_items["Obamium"] += 1
-                            else:
-                                epic_items.update({"Obamium": 1})
-                        
-                        if cool_land == "Berkelium Southern Potatos":
-                            if "Potatos" in epic_items:
-                                epic_items["Potatos"] += 2
-                            else:
-                                epic_items.update({"Potatos": 2})
+            for cool_citizen, money in bruh.items():
+                epic_items: dict = {}
+                with open(f"data/items/{cool_citizen}.json", 'r') as f:
+                    epic_items = json.load(f)
 
-                        if cool_land == "Berkelium Northern Potatos":
-                            if "Potatos" in epic_items:
-                                epic_items["Potatos"] += 3
-                            else:
-                                epic_items.update({"Potatos": 3})
-                        
-                        if cool_land == "Berkelium Coal":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 3
-                            else:
-                                epic_items.update({"Coal": 3})
-                        
-                        if cool_land == "Desperatetopia Coal":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 1
-                            else:
-                                epic_items.update({"Coal": 1})
-                        
-                        if cool_land == "Soodland Coal and Oil":
-                            if "Coal" in epic_items:
-                                epic_items["Coal"] += 1
-                            else:
-                                epic_items.update({"Coal": 1})
-                            if "Oil" in epic_items:
-                                epic_items["Oil"] += 2
-                            else:
-                                epic_items.update({"Oil": 2})
-                        
-                        if cool_land == "Poop HQ Agonium and Oil":
-                            if "Oil" in epic_items:
-                                epic_items["Oil"] += 1
-                            else:
-                                epic_items.update({"Oil": 1})
-                            if "Agonium" in epic_items:
-                                epic_items["Agonium"] += 9
-                            else:
-                                epic_items.update({"Agonium": 9})
-                        
-                        if cool_land == "Haha Funni City Obamium and Potatos":
-                            if "Obamium" in epic_items:
-                                epic_items["Obamium"] += 2
-                            else:
-                                epic_items.update({"Obamium": 2})
-                            if "Potatos" in epic_items:
-                                epic_items["Potatos"] += 3
-                            else:
-                                epic_items.update({"Potatos": 3})
-                        
-                        if cool_land == "Ben State Potatos":
-                            if "Potatos" in epic_items:
-                                epic_items["Potatos"] += 4
-                            else:
-                                epic_items.update({"Potatos": 4})
+                save_file = False
+                if "Fard City Coal" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 1
+                    else:
+                        epic_items.update({"Coal": 1})
+                
+                if "Lelwoon Iron and Obamium" in epic_items.keys():
+                    save_file = True
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 2
+                    else:
+                        epic_items.update({"Iron": 2})
+                    if "Obamium" in epic_items:
+                        epic_items["Obamium"] += 3
+                    else:
+                        epic_items.update({"Obamium": 3})
+                
+                if "Helpimacubia Iron and Obamium" in epic_items.keys():
+                    save_file = True
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 2
+                    else:
+                        epic_items.update({"Iron": 2})
+                    if "Obamium" in epic_items:
+                        epic_items["Obamium"] += 1
+                    else:
+                        epic_items.update({"Obamium": 1})
+                
+                if "Switzerland 2.0 Obamium" in epic_items.keys():
+                    save_file = True
+                    if "Obamium" in epic_items:
+                        epic_items["Obamium"] += 1
+                    else:
+                        epic_items.update({"Obamium": 1})
+                
+                if "New Soodland Iron and Obamium" in epic_items.keys():
+                    save_file = True
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 1
+                    else:
+                        epic_items.update({"Iron": 1})
+                    if "Obamium" in epic_items:
+                        epic_items["Obamium"] += 1
+                    else:
+                        epic_items.update({"Obamium": 1})
+                
+                if "New Bob Issues Rare Materials" in epic_items.keys():
+                    save_file = True
+                    if "Diamonds" in epic_items:
+                        epic_items["Diamonds"] += 1
+                    else:
+                        epic_items.update({"Diamonds": 1})
+                    if "Gold" in epic_items:
+                        epic_items["Gold"] += 1
+                    else:
+                        epic_items.update({"Gold": 1})
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 1
+                    else:
+                        epic_items.update({"Iron": 1})
+                
+                if "Southern BOLG Rare Materials" in epic_items.keys():
+                    save_file = True
+                    if "Diamonds" in epic_items:
+                        epic_items["Diamonds"] += 1
+                    else:
+                        epic_items.update({"Diamonds": 1})
+                    if "Gold" in epic_items:
+                        epic_items["Gold"] += 1
+                    else:
+                        epic_items.update({"Gold": 1})
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 1
+                    else:
+                        epic_items.update({"Iron": 1})
+                
+                if "Capital Coal and Obamium" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 1
+                    else:
+                        epic_items.update({"Coal": 1})
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 1
+                    else:
+                        epic_items.update({"Iron": 1})
+                
+                if "Thaizsanches Coal" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 1
+                    else:
+                        epic_items.update({"Coal": 1})
+                
+                if "BOLG Uranium and Iron" in epic_items.keys():
+                    save_file = True
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 3
+                    else:
+                        epic_items.update({"Iron": 3})
+                    if "Uranium" in epic_items:
+                        epic_items["Uranium"] += 3
+                    else:
+                        epic_items.update({"Uranium": 3})
+                
+                if "r/lelcity Oil and Natural Gas" in epic_items.keys():
+                    save_file = True
+                    if "Oil" in epic_items:
+                        epic_items["Oil"] += 3
+                    else:
+                        epic_items.update({"Oil": 3})
+                    if "Natural Gas" in epic_items:
+                        epic_items["Natural Gas"] += 2
+                    else:
+                        epic_items.update({"Natural Gas": 2})
+                
+                if "Breat Gritain Coal" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 1
+                    else:
+                        epic_items.update({"Coal": 1})
+                
+                if "Breat Gritain Wood":
+                    save_file = True
+                    if "Wood" in epic_items:
+                        epic_items["Wood"] += 1
+                    else:
+                        epic_items.update({"Wood": 1})
+                
+                if "Claps Wood" in epic_items.keys():
+                    save_file = True
+                    if "Wood" in epic_items:
+                        epic_items["Wood"] += 3
+                    else:
+                        epic_items.update({"Wood": 3})
+                
+                if "New Lelcity Coal" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 1
+                    else:
+                        epic_items.update({"Coal": 1})
+                
+                if "Berkelium Iron and Obamium" in epic_items.keys():
+                    save_file = True
+                    if "Iron" in epic_items:
+                        epic_items["Iron"] += 2
+                    else:
+                        epic_items.update({"Iron": 2})
+                    if "Obamium" in epic_items:
+                        epic_items["Obamium"] += 1
+                    else:
+                        epic_items.update({"Obamium": 1})
+                
+                if "Berkelium Southern Potatos" in epic_items.keys():
+                    save_file = True
+                    if "Potatos" in epic_items:
+                        epic_items["Potatos"] += 2
+                    else:
+                        epic_items.update({"Potatos": 2})
+
+                if "Berkelium Northern Potatos" in epic_items.keys():
+                    save_file = True
+                    if "Potatos" in epic_items:
+                        epic_items["Potatos"] += 3
+                    else:
+                        epic_items.update({"Potatos": 3})
+                
+                if "Berkelium Coal" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 3
+                    else:
+                        epic_items.update({"Coal": 3})
+                
+                if "Desperatetopia Coal" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 1
+                    else:
+                        epic_items.update({"Coal": 1})
+                
+                if "Soodland Coal and Oil" in epic_items.keys():
+                    save_file = True
+                    if "Coal" in epic_items:
+                        epic_items["Coal"] += 1
+                    else:
+                        epic_items.update({"Coal": 1})
+                    if "Oil" in epic_items:
+                        epic_items["Oil"] += 2
+                    else:
+                        epic_items.update({"Oil": 2})
+                
+                if "Poop HQ Agonium and Oil" in epic_items.keys():
+                    save_file = True
+                    if "Oil" in epic_items:
+                        epic_items["Oil"] += 1
+                    else:
+                        epic_items.update({"Oil": 1})
+                    if "Agonium" in epic_items:
+                        epic_items["Agonium"] += 9
+                    else:
+                        epic_items.update({"Agonium": 9})
+                
+                if "Haha Funni City Obamium and Potatos" in epic_items.keys():
+                    save_file = True
+                    if "Obamium" in epic_items:
+                        epic_items["Obamium"] += 2
+                    else:
+                        epic_items.update({"Obamium": 2})
+                    if "Potatos" in epic_items:
+                        epic_items["Potatos"] += 3
+                    else:
+                        epic_items.update({"Potatos": 3})
+                
+                if "Ben State Potatos" in epic_items.keys():
+                    save_file = True
+                    if "Potatos" in epic_items:
+                        epic_items["Potatos"] += 4
+                    else:
+                        epic_items.update({"Potatos": 4})
+                
+                if save_file:
+                    with open(f"data/items/{cool_citizen}.json", "w") as f:
+                        json.dump(epic_items, f)
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print("resources cog loaded")
         self.resource_thing.start()
+        print("resources cog loaded")
 
 def setup(client: commands.Bot):
     client.add_cog(Resources(client))

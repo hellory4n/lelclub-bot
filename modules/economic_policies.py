@@ -85,29 +85,29 @@ class EconomicPolicies(commands.Cog):
             total_salaries = 0
             for citizen, money in citizens.items():
                 lelclub: discord.Guild = self.client.get_guild(1025162922797826059)
-                cool_citizen: discord.Member = lelclub.get_member(int(citizen))
-                epic_salary = 0
+                cool_citizen: discord.Member = await lelclub.getch_member(citizen)
+                epic_salary: int = 0
                 if cool_citizen != None:
                     for role in cool_citizen.roles:
                         # executive branch
                         if role.name == "President" or role.name == "Vice President" or role.name.startswith("CEO"):
-                            epic_salary += 10,000
-                            total_salaries += 10,000
+                            epic_salary += 10000
+                            total_salaries += 10000
                         
                         # legislative branch
                         if role.name == "Representative":
-                            epic_salary += 2,000
-                            total_salaries += 2,000
+                            epic_salary += 2000
+                            total_salaries += 2000
                         
                         # judiciary branch
                         if role.name == "Supreme Court":
-                            epic_salary += 4,000
-                            total_salaries += 4,000
+                            epic_salary += 4000
+                            total_salaries += 4000
                         
                         # governors
                         if role.name.startswith("Governor"):
-                            epic_salary += 6,000
-                            total_salaries += 6,000
+                            epic_salary += 6000
+                            total_salaries += 6000
                         
                         # all the other roles
                         # the code ever made
@@ -120,8 +120,8 @@ class EconomicPolicies(commands.Cog):
                             role.name == "Astronaut" or
                             role.name == "Engineer" or
                             role.name == "Document Dealer"):
-                            epic_salary += 6,000
-                            total_salaries += 6,000
+                            epic_salary += 6000
+                            total_salaries += 6000
                         
                         if epic_salary > 0:
                             with open(f"data/money/{citizen}.json", "r+") as file:

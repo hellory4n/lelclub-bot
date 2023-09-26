@@ -174,7 +174,7 @@ class Resources(commands.Cog):
                     else:
                         epic_items.update({"Coal": 1})
                 
-                if "Breat Gritain Wood":
+                if "Breat Gritain Wood" in epic_items.keys():
                     save_file = True
                     if "Wood" in epic_items:
                         epic_items["Wood"] += 1

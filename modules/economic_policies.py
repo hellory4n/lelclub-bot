@@ -74,9 +74,76 @@ class EconomicPolicies(commands.Cog):
 
 
 
+    @tasks.loop(minutes=60.0)
+    async def salary_stuff(self):
+        if datetime.utcnow().hour == 4 and datetime.utcnow().isoweekday() == 2:
+            # first get a list of people that exist
+            citizens: dict = {}
+            with open("data/leaderboard.json", 'r') as f:
+                citizens = json.load(f)
+            
+            total_salaries = 0
+            for citizen, money in citizens.items():
+                lelclub: discord.Guild = self.client.get_guild(1025162922797826059)
+                cool_citizen: discord.Member = lelclub.get_member(int(citizen))
+                epic_salary = 0
+                if cool_citizen != None:
+                    for role in cool_citizen.roles:
+                        # executive branch
+                        if role.name == "President" or role.name == "Vice President" or role.name.startswith("CEO"):
+                            epic_salary += 10,000
+                            total_salaries += 10,000
+                        
+                        # legislative branch
+                        if role.name == "Representative":
+                            epic_salary += 2,000
+                            total_salaries += 2,000
+                        
+                        # judiciary branch
+                        if role.name == "Supreme Court":
+                            epic_salary += 4,000
+                            total_salaries += 4,000
+                        
+                        # governors
+                        if role.name.startswith("Governor"):
+                            epic_salary += 6,000
+                            total_salaries += 6,000
+                        
+                        # all the other roles
+                        # the code ever made
+                        if (role.name == "Judge" or
+                            role.name == "Soldier" or
+                            role.name == "Enforcer" or
+                            role.name == "Scientist" or
+                            role.name == "Doctor" or
+                            role.name == "Farmer" or
+                            role.name == "Astronaut" or
+                            role.name == "Engineer" or
+                            role.name == "Document Dealer"):
+                            epic_salary += 6,000
+                            total_salaries += 6,000
+                        
+                        if epic_salary > 0:
+                            with open(f"data/money/{citizen}.json", "r+") as file:
+                                pain = json.load(file)
+                                pain["money"] += epic_salary
+                                file.seek(0)
+                                file.write(json.dumps(pain))
+                                file.truncate()
+            
+            embed = Embed(
+                title="Salaries from the Government",
+                description=f"- <:gillbates:1027053227709042688> President and Vice President: B$ 10,000\n- :office_worker: CEOs (government): B$ 10,000\n- :sleeping: Representatives: B$ 2,000\n- :judge: Supreme Court: B$ 4,000\n- :moyai: Governors: B$ 6,000\n- :judge: Judges: B$ 6,000\n- :military_helmet: Soldiers: B$ 6,000\n- :police_officer: Enforcers: B$ 6,000\n- :scientist: Scientists: B$ 6,000\n- :health_worker: Doctors: B$ 6,000\n- :farmer: Farmers: B$ 6,000\n- :astronaut: Astronauts: B$ 6,000\n- :construction_worker: Engineers: B$ 6,000\n- :nerd: Document Dealers: B$ 6,000\n- :money_mouth: All of the salaries: B$ {total_salaries:,}",                color=0x3eba49
+            )
+            client = self.client.get_channel(1126291049795559585)
+            await client.send("<@&1133081886017716395> You got salaries!", embed=embed)
+
+
+
     @commands.Cog.listener()
     async def on_ready(self):
         self.economy_stats.start()
+        self.salary_stuff.start()
         print("economic policies cog loaded")    
 
     @commands.command(aliases=["work-payout"])

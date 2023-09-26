@@ -92,11 +92,56 @@ class Items(commands.Cog):
             # make sure the item doesn't already exist
             name = re.sub("[^a-zA-Z0-9 ]", "", name) # only alphanumeric characters and spaces allowed
             with open(f"data/shop.json", "r") as f:
-                pain = json.load(f)
+                pain: dict = json.load(f)
             
-            if name in pain:
+            if name in pain.keys():
                 embed = Embed(title="Error",
                               description=f"Item `{name}` already exists.",
+                              color=discord.Color(0xff4865))
+                await modal_inter.response.send_message(embed=embed)
+                return
+            
+            # make sure this isn't the resource system
+            very_illegal_names = [
+                "Fard City Coal",
+                "Lelwoon Iron and Obamium",
+                "Switzerland 2.0 Obamium",
+                "New Soodland Iron and Obamium",
+                "New Bob Issues Rare Materials",
+                "Southern BOLG Rare Materials",
+                "Capital Coal and Obamium",
+                "Thaizsanches Coal",
+                "BOLG Uranium and Iron",
+                "r/lelcity Oil and Natural Gas",
+                "Breat Gritain Coal",
+                "Breat Gritain Wood",
+                "Claps Wood",
+                "New Lelcity Coal",
+                "Berkelium Iron and Obamium",
+                "Berkelium Southern Potatos",
+                "Berkelium Northern Potatos",
+                "Berkelium Coal",
+                "Desperatetopia Coal",
+                "Soodland Coal and Oil",
+                "Poop HQ Agonium and Oil",
+                "Haha Funni City Obamium and Potatos",
+                "Ben State Potatos",
+                "Coal",
+                "Iron",
+                "Obamium",
+                "Diamonds",
+                "Gold",
+                "Uranium",
+                "Oil",
+                "Natural Gas",
+                "Wood",
+                "Potatos",
+                "Agonium"
+            ]
+
+            if name in very_illegal_names:
+                embed = Embed(title="Error",
+                              description=f"You can't use that name! (this name is part of the resource system)",
                               color=discord.Color(0xff4865))
                 await modal_inter.response.send_message(embed=embed)
                 return

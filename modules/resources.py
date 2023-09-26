@@ -12,7 +12,7 @@ class Resources(commands.Cog):
 
     @tasks.loop(minutes=60.0)
     async def resource_thing(self):
-        if datetime.now(timezone.utc).hour == 2:
+        if datetime.now(timezone.utc).hour == 15:
             land = [
                 "Fard City Coal",
                 "Lelwoon Iron and Obamium",

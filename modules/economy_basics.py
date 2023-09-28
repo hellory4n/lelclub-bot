@@ -39,6 +39,11 @@ class EconomyBasics(commands.Cog):
             with open(f"data/items/{user}.json", "w+") as json_file:
                 json.dump(init, json_file)
         
+        if not os.path.exists(f"data/shareholders/{user}.json"):
+            init = {}
+            with open(f"data/shareholders/{user}.json", "w+") as json_file:
+                json.dump(init, json_file)
+        
         
     
     @staticmethod

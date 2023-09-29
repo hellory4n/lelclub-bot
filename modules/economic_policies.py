@@ -76,7 +76,7 @@ class EconomicPolicies(commands.Cog):
 
     @tasks.loop(minutes=60.0)
     async def salary_stuff(self):
-        if datetime.utcnow().hour == 4 and datetime.utcnow().isoweekday() == 2:
+        if datetime.utcnow().hour == 15 and datetime.utcnow().isoweekday() == 6:
             # first get a list of people that exist
             citizens: dict = {}
             with open("data/leaderboard.json", 'r') as f:

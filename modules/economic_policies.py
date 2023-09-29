@@ -90,9 +90,13 @@ class EconomicPolicies(commands.Cog):
                 if cool_citizen != None:
                     for role in cool_citizen.roles:
                         # executive branch
-                        if role.name == "President" or role.name == "Vice President" or role.name.startswith("CEO"):
+                        if role.name == "President" or role.name == "Vice President":
                             epic_salary += 10000
                             total_salaries += 10000
+                        
+                        if role.name.startswith("CEO of"):
+                            epic_salary += 3000
+                            total_salaries += 3000
                         
                         # legislative branch
                         if role.name == "Representative":
@@ -113,13 +117,9 @@ class EconomicPolicies(commands.Cog):
                         # the code ever made
                         if (role.name == "Judge" or
                             role.name == "Soldier" or
-                            role.name == "Enforcer" or
-                            role.name == "Scientist" or
                             role.name == "Doctor" or
                             role.name == "Farmer" or
-                            role.name == "Astronaut" or
-                            role.name == "Engineer" or
-                            role.name == "Document Dealer"):
+                            role.name == "Astronaut"):
                             epic_salary += 6000
                             total_salaries += 6000
                         
@@ -131,12 +131,21 @@ class EconomicPolicies(commands.Cog):
                                 file.write(json.dumps(pain))
                                 file.truncate()
             
+            # make the government go into crippling debt
+            # that account is the national gofundme
+            with open("data/money/928777777996505148.json", 'r+') as f:
+                suffer = json.load(f)
+                suffer["money"] -= total_salaries
+                f.seek(0)
+                f.write(json.dumps(suffer))
+                f.truncate()
+
             embed = Embed(
                 title="Salaries from the Government",
-                description=f"- <:gillbates:1027053227709042688> President and Vice President: B$ 10,000\n- :office_worker: CEOs (government): B$ 10,000\n- :sleeping: Representatives: B$ 2,000\n- :judge: Supreme Court: B$ 4,000\n- :moyai: Governors: B$ 6,000\n- :judge: Judges: B$ 6,000\n- :military_helmet: Soldiers: B$ 6,000\n- :police_officer: Enforcers: B$ 6,000\n- :scientist: Scientists: B$ 6,000\n- :health_worker: Doctors: B$ 6,000\n- :farmer: Farmers: B$ 6,000\n- :astronaut: Astronauts: B$ 6,000\n- :construction_worker: Engineers: B$ 6,000\n- :nerd: Document Dealers: B$ 6,000\n- :money_mouth: All of the salaries: B$ {total_salaries:,}",                color=0x3eba49
+                description=f"- <:gillbates:1027053227709042688> President and Vice President: B$ 10,000\n- :office_worker: CEOs (government): B$ 3,000\n- :sleeping: Representatives: B$ 2,000\n- :judge: Supreme Court: B$ 4,000\n- :moyai: Governors: B$ 6,000\n- :judge: Judges: B$ 6,000\n- :military_helmet: Soldiers: B$ 6,000\n- :health_worker: Doctors: B$ 6,000\n- :astronaut: Astronauts: B$ 6,000\n- :money_mouth: All of the salaries: B$ {total_salaries:,}", color=0x3eba49
             )
             client = self.client.get_channel(1126291049795559585)
-            await client.send("<@&1133081886017716395> You got salaries!", embed=embed)
+            await client.send("<@&1026921409945014322> <@&1026921523493208095> <@&1025546848196378714> <@&1026919529953107970> <@&1048676462183592026> <@&1066500643830907000> <@&1048676880531861564> <@&1133512191107145818> <@&1134552621697466488> <@&1033442688034426971> <@&1133774757242871818> <@&1062399595017162852> <@&1139670263479414904> <@&1127489107178836038> <@&1026920056409563158> <@&1048677194051895397> <@&1059928836189474866> <@&1136807025720959016> <@&1141399771697926306> <@&1026909725297754184> <@&1025198958487806022> <@&1051890694698053703> <@&1049022180958154752> <@&1125516217642397766> <@&1125524660889595926> You got salaries!", embed=embed)
 
 
 

@@ -127,18 +127,22 @@ class EconomicPolicies(commands.Cog):
                             with open(f"data/money/{citizen}.json", "r+") as file:
                                 pain = json.load(file)
                                 pain["money"] += epic_salary
+                                pain["total"] += epic_salary
                                 file.seek(0)
                                 file.write(json.dumps(pain))
                                 file.truncate()
+                            EconomyBasics.update_leaderboard(citizen)
             
             # make the government go into crippling debt
             # that account is the national gofundme
             with open("data/money/928777777996505148.json", 'r+') as f:
                 suffer = json.load(f)
                 suffer["money"] -= total_salaries
+                suffer["total"] -= total_salaries
                 f.seek(0)
                 f.write(json.dumps(suffer))
                 f.truncate()
+            EconomyBasics.update_leaderboard(928777777996505148)
 
             embed = Embed(
                 title="Salaries from the Government",
